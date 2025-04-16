@@ -1,4 +1,4 @@
-# legal-i Agent Example (Quarkus)
+# amaise Agent Example (Quarkus)
 
 Example demonstrating the use of the agent SDK from a Quarkus application.
 
@@ -8,10 +8,10 @@ In the `ExampleService.java` and `ExampleEventService.java`, you see examples of
 
 ### Application Logic
 
-- After the Quarkus application is initialized, the agent connects to the legal-i cloud.
+- After the Quarkus application is initialized, the agent connects to the amaise cloud.
 - If the connection can be established, an Event is published to the `started` Vert.x Event Bus Address.
 - This has the following effects:
-	- Upon receiving this event, the `ExampleService` creates legal cases and adds source files on the legal-i workspace.
+	- Upon receiving this event, the `ExampleService` creates legal cases and adds source files on the amaise workspace.
 	- The `ExampleEventService` starts listening to events triggered on the API.
 		- As an example, he requests a `pong`-Event from the API.
 		- This pong will be sent by the API asynchronously and be visible in the EventHandler
@@ -25,7 +25,7 @@ The following endpoints are provided in the Example Agent.
 # Liveness (agent is up)
 http://localhost:8080/q/health/live
 
-# Readiness (agent can connect to the legal-i cloud)
+# Readiness (agent can connect to the amaise cloud)
 http://localhost:8080/q/health/ready
 
 # Prometheus metrics; we recommend setting up alerts on the hearbeat_* counters.

@@ -5,22 +5,14 @@
 # - LEGALI_CLIENT_ID: <>
 # - ACTION_MONITORING_SLACK: Slack notification URL
 
-name: Agent Example Validation
+name: Agent Example Validation (legacy)
 
 # keep it simple for now, create a new Docker image after each rebuild
 # but do not run when a new tag is pushed
-on:
-  push:
-    branches:
-      - '**'
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    # run once per day at 06.00 UTC
-    - cron: '0 6 * * *'
-  workflow_dispatch:
+on: []
 
 jobs:
-  validate-sdk-agent-example-spring:
+  validate-sdk-agent-example-spring-legacy:
     env:
       DOCKER_REPO: legal-i/agent-example-spring
     runs-on: ubuntu-latest
@@ -45,7 +37,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ${{env.DOCKER_REPO}}:latest
-          options: -e LEGALI_AUTH_URL=https://auth.dev.legal-i.ch -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
+          options: -e LEGALI_AUTH_URL=https://auth.dev.legal-i.ch -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.legal-i.ch/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
           run: |
             echo "# START AGENT"
             env
@@ -64,18 +56,10 @@ jobs:
             else
               exit 1;
             fi
-      - name: Report Status
-        if: always()
-        uses: ravsamhq/notify-slack-action@v1
-        with:
-          status: ${{ job.status }}
-          notify_when: 'failure'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
 
-  validate-sdk-agent-example-quarkus:
+  validate-sdk-agent-example-quarkus-legacy:
     needs:
-      - validate-sdk-agent-example-spring # make sure they don't run parallel to not interfere with each other
+      - validate-sdk-agent-example-spring-legacy # make sure they don't run parallel to not interfere with each other
     env:
       DOCKER_REPO: legal-i/agent-example-quarkus
     runs-on: ubuntu-latest
@@ -100,7 +84,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ${{env.DOCKER_REPO}}:latest
-          options: -e LEGALI_AUTH_URL=https://auth.dev.legal-i.ch -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
+          options: -e LEGALI_AUTH_URL=https://auth.dev.legal-i.ch -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.legal-i.ch/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
           run: |
             echo "# START AGENT"
             env
@@ -119,11 +103,3 @@ jobs:
             else
               exit 1;
             fi
-      - name: Report Status
-        if: always()
-        uses: ravsamhq/notify-slack-action@v1
-        with:
-          status: ${{ job.status }}
-          notify_when: 'failure'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}

@@ -23,7 +23,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-/** This service is used to react to events form the legal-i cloud. */
+/** This service is used to react to events form the amaise cloud. */
 @Service
 public class ExampleEventService {
   private static final Logger log = LoggerFactory.getLogger(ExampleEventService.class);

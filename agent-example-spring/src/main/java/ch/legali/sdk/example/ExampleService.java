@@ -10,9 +10,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-/**
- * The ExampleService the ExampleThreads once the connection to the legal-i cloud is established.
- */
+/** The ExampleService the ExampleThreads once the connection to the amaise cloud is established. */
 @Service
 public class ExampleService {
   private static final Logger log = LoggerFactory.getLogger(HealthService.class);

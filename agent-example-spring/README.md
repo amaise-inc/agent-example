@@ -1,4 +1,4 @@
-# legal-i Agent Example (Spring Boot)
+# amaise Agent Example (Spring Boot)
 
 Example demonstrating the use of the agent SDK from a Spring Boot application.
 
@@ -8,10 +8,10 @@ In the `ExampleThread.java` and `ExampleEventService.java`, you see examples of 
 
 ### Application Logic
 
-- After the Spring Boot application is initialized, the agent connects to the legal-i cloud.
+- After the Spring Boot application is initialized, the agent connects to the amaise cloud.
 - If the connection can be established, a `StartConnectorEvent` Event is published.
 - This has the following effects:
-	- Upon receiving this event, the `ExampleService` runs `ExampleThread` that creates legal cases and adds source files on the legal-i workspace.
+	- Upon receiving this event, the `ExampleService` runs `ExampleThread` that creates legal cases and adds source files on the amaise workspace.
 	- The `ExampleEventService` starts listening to events triggered on the API.
 		- As an example, he requests a `pong`-Event from the API.
 		- This pong will be sent by the API asynchronously and be visible in the EventHandler
@@ -25,7 +25,7 @@ The following endpoints are provided in the Example Agent.
 # Liveness (agent is up)
 http://localhost:8085/actuator/health/liveness
 
-# Readiness (agent can connect to the legal-i cloud)
+# Readiness (agent can connect to the amaise cloud)
 http://localhost:8085/actuator/health/readiness
 
 # Prometheus metrics; we recommend setting up alerts on the hearbeat_* counters.
@@ -61,14 +61,14 @@ legali.example.cleanup=true
 legali.default-metadata.legali.pipeline.disabled=true
 legali.default-metadata.legali.uploader=example-agent
 
-# Connection to the legal-i Cloud
-legali.auth-url=https://auth.legal-i.ch
-legali.api-url=https://agents.legal-i.ch/agents/v1
+# Connection to the amaise Cloud
+legali.auth-url=https://auth.eu.amaise.com
+legali.api-url=https://agents.eu.amaise.com/agents/v1
 legali.client-id=<>
 legali.client-secret=<>
 
 # FileService: Use CLOUDFRONT to upload files directly to AWS.
-# If there are network restrictions, you can use LEGALI to proxy via legal-i API. This is not recommended.
+# If there are network restrictions, you can use LEGALI to proxy via amaise API. This is not recommended.
 legali.fileservice=CLOUDFRONT
 
 #legali.request-connection-timeout-seconds=30

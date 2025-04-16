@@ -23,6 +23,7 @@ install:
 
 ## build: build the agent
 build:
+	@${maven_cmd} -B dependency:go-offline
 	@${maven_cmd} package -DskipTests
 
 ## format: run spotless google java formatter

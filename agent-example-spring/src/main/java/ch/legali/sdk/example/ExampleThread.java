@@ -175,7 +175,7 @@ public class ExampleThread implements Runnable {
 
     // NOTE: will always time out, if processing is disabled
     if (status.equals(SourceFileStatus.ERROR) || status.equals(SourceFileStatus.TIMEOUT)) {
-      log.warn("💥 legal-i was not fast enough to process this file {}", sourceFile.sourceFileId());
+      log.warn("💥 amaise was not fast enough to process this file {}", sourceFile.sourceFileId());
     }
 
     // Try to create same sourcefile with another file

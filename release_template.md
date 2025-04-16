@@ -1,6 +1,6 @@
 # MANDATORY UPDATE
 This update must be installed because of security issues or cloud API changes.
-legal-i will contact you directly.
+amaise will contact you directly.
 TODO: delete if not applicable if it applies, add `[MUST UPDATE]` to the release title
 
 ### Breaking Java Interfaces

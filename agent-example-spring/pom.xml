@@ -12,9 +12,9 @@
     </parent>
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.8.2</version>
+    <version>1.9.1</version>
     <name>Agent Example (Spring)</name>
-    <description>legal-i Agent Example (Spring)</description>
+    <description>amaise Agent Example (Spring)</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -25,9 +25,9 @@
     </properties>
     <repositories>
         <repository>
-            <id>legali</id>
-            <name>legal-i Maven Repository</name>
-            <url>https://repository.legal-i.ch/release</url>
+            <id>amaise</id>
+            <name>amaise Maven Repository</name>
+            <url>https://repository.amaise.com/release</url>
         </repository>
     </repositories>
     <dependencies>
@@ -170,6 +170,7 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>12.1.0</version>
                 <configuration>
+                    <dataDirectory>${user.home}/.depcheck-cache</dataDirectory>
                     <skipProvidedScope>true</skipProvidedScope>
                     <skipRuntimeScope>true</skipRuntimeScope>
                     <skipSystemScope>true</skipSystemScope>

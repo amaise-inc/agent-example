@@ -5,7 +5,7 @@
 # - LEGALI_CLIENT_ID: <>
 # - ACTION_MONITORING_SLACK: Slack notification URL
 
-name: Agent Example Validation
+name: Agent Example Validation (Legacy)
 
 # keep it simple for now, create a new Docker image after each rebuild
 # but do not run when a new tag is pushed
@@ -45,7 +45,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ${{env.DOCKER_REPO}}:latest
-          options: -e LEGALI_AUTH_URL=https://auth.dev.amaise.com -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
+          options: -e LEGALI_AUTH_URL=https://auth.dev.legal-i.ch -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.legal-i.ch/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
           run: |
             echo "# START AGENT"
             env
@@ -100,7 +100,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ${{env.DOCKER_REPO}}:latest
-          options: -e LEGALI_AUTH_URL=https://auth.dev.amaise.com -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
+          options: -e LEGALI_AUTH_URL=https://auth.dev.legal-i.ch -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.legal-i.ch/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
           run: |
             echo "# START AGENT"
             env

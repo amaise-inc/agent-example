@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.4</version>
+        <version>3.4.5</version>
         <relativePath/>
     </parent>
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.9.1</version>
+    <version>1.9.2-alpha</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
     <properties>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.15.0-M2</version>
+            <version>1.15.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

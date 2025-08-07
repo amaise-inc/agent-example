@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExampleAgentMetadataThread implements Runnable {
 
-  private static final Logger log = LoggerFactory.getLogger(ExampleThread.class);
+  private static final Logger log = LoggerFactory.getLogger(ExampleAgentMetadataThread.class);
 
   private final LegalCaseService legalCaseService;
   private final SourceFileService sourceFileService;

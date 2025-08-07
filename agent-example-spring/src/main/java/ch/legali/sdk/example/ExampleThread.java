@@ -47,6 +47,7 @@ public class ExampleThread implements Runnable {
   private final ExampleConfig exampleConfig;
 
   private final ExampleAgentMetadataThread exampleAgentMetadataThread;
+  private final ExampleBulkProcessingThread exampleBulkProcessingThread;
 
   public ExampleThread(
       LegalCaseService legalCaseService,
@@ -54,6 +55,7 @@ public class ExampleThread implements Runnable {
       ExportService exportService,
       FileService fileService,
       ExampleAgentMetadataThread exampleAgentMetadataThread,
+      ExampleBulkProcessingThread exampleBulkProcessingThread,
       ExampleConfig exampleConfig) {
     this.legalCaseService = legalCaseService;
     this.sourceFileService = sourceFileService;
@@ -63,6 +65,8 @@ public class ExampleThread implements Runnable {
 
     // used to test metadata, see below
     this.exampleAgentMetadataThread = exampleAgentMetadataThread;
+    // used to test bulk processing, see below
+    this.exampleBulkProcessingThread = exampleBulkProcessingThread;
   }
 
   @Override
@@ -78,6 +82,10 @@ public class ExampleThread implements Runnable {
     // Uncomment to also run the example of the ExampleAgentMetadataThread
     // See ExampleAgentMetadataThread before uncommenting for further instructions
     // this.exampleAgentMetadataThreadBean.run();
+
+    // Uncomment to also run the example of the ExampleBulkProcessingThread
+    // See ExampleBulkProcessingThread before uncommenting for further instructions
+    // this.exampleBulkProcessingThread.run();
   }
 
   /**
@@ -239,7 +247,7 @@ public class ExampleThread implements Runnable {
             // NOTE: you must use the same UUID of the sourcefile you want to replace!
             // this is just to make it fail for the sake of the example
             .sourceFileId(UUID.randomUUID())
-            .folder("new-folder")
+            .folder("accident")
             .putMetadata("legali.mapping.key", "M2")
             .build();
     try {

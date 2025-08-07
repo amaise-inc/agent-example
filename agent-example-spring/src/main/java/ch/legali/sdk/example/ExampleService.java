@@ -1,9 +1,10 @@
 package ch.legali.sdk.example;
 
 import ch.legali.sdk.example.config.ExampleConfig;
-import ch.legali.sdk.internal.HealthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.task.TaskExecutor;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 /** The ExampleService the ExampleThreads once the connection to the amaise cloud is established. */
 @Service
 public class ExampleService {
-  private static final Logger log = LoggerFactory.getLogger(HealthService.class);
+  private static final Logger log = LoggerFactory.getLogger(ExampleService.class);
 
   private final TaskExecutor taskExecutor;
   private final ApplicationContext applicationContext;
@@ -21,7 +22,7 @@ public class ExampleService {
   private final ExampleConfig config;
 
   public ExampleService(
-      TaskExecutor taskExecutor,
+      @Autowired @Qualifier("applicationTaskExecutor") TaskExecutor taskExecutor,
       ApplicationContext applicationContext,
       ExampleThread exampleThreadBean,
       ExampleConfig config) {

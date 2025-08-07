@@ -197,7 +197,7 @@ public class ExampleService {
             // NOTE: you must use the same UUID of the sourcefile you want to replace!
             // this is just to make it fail for the sake of the example
             .sourceFileId(UUID.randomUUID())
-            .folder("new-folder")
+            .folder("other")
             .putMetadata("legali.mapping.key", "M2")
             .build();
     try {

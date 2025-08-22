@@ -42,6 +42,16 @@ public class ExampleBulkProcessingThread implements Runnable {
     this.exampleConfig = exampleConfig;
   }
 
+  /*
+    INSTRUCTIONS:
+
+    1. Setup agent credentials and legali.example.tenants.department-1 (destination tenant) in the application.properties
+    2. Place your PDF files in a local folder and make sure the sourcePath points to it.
+    3. Provide a valid user ID as owner of the AgentLegalCaseDTO and adapt any other default values of the DTOs as needed.
+    4. In the ExampleThread, in the run() method, comment out the main while-loop and uncomment this.exampleBulkProcessingThread.run() below.
+    5. Run the example and wait for all files to be processed.
+  */
+
   @Override
   public void run() {
     log.info("🚀  Starting ExampleBulkProcessingThread");
@@ -113,10 +123,6 @@ public class ExampleBulkProcessingThread implements Runnable {
             .folder("unknown")
             // Use filename as reference
             .fileReference(filename)
-            // Provide known metadata for the SourceFile to facilitate extraction
-            .putMetadata("legali.metadata.title", "AUF-Zeugnis")
-            .putMetadata("legali.metadata.alttitle", "AUF-Zeugnis")
-            .putMetadata("legali.metadata.doctype", "type_medical_certificate")
             .build();
 
     try (InputStream is = Files.newInputStream(filePath)) {

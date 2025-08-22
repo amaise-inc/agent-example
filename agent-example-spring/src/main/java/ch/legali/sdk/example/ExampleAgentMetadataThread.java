@@ -10,6 +10,7 @@ import ch.legali.sdk.services.SourceFileService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -77,8 +78,10 @@ public class ExampleAgentMetadataThread implements Runnable {
     AgentLegalCaseDTO legalCase =
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())
-            .firstname(legalCaseFirstname)
-            .lastname(legalCaseLastname)
+            .caseData(
+                Map.ofEntries(
+                    Map.entry("PII_FIRSTNAME", legalCaseFirstname),
+                    Map.entry("PII_LASTNAME", legalCaseLastname)))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")

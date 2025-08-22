@@ -3,26 +3,40 @@
         xmlns="http://maven.apache.org/POM/4.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
-        <relativePath/>
+        <version>3.5.4</version>
+        <relativePath></relativePath>
     </parent>
+
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.9.3</version>
+    <version>1.10.0</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
+
     <properties>
+        <!-- Java and Encoding -->
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.release>21</maven.compiler.release>
-        <java.version>21</java.version>
+
+        <!-- Plugin and Development Versions -->
+        <spring-boot.version>3.5.4</spring-boot.version>
+        <spotbugs.version>4.9.3</spotbugs.version>
+        <spotless.version>2.43.0</spotless.version>
+        <google-java-format.version>1.22.0</google-java-format.version>
+        <dependency-check.version>12.1.3</dependency-check.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <spotbugs.maven.plugin.version>4.9.3.2</spotbugs.maven.plugin.version>
+        <checkstyle.version>3.6.0</checkstyle.version>
     </properties>
+
+
     <repositories>
         <repository>
             <id>amaise</id>
@@ -30,12 +44,16 @@
             <url>https://repository.amaise.com/release</url>
         </repository>
     </repositories>
+
     <dependencies>
+        <!-- Project Module -->
         <dependency>
             <groupId>ch.legali</groupId>
             <artifactId>agent-sdk</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -61,50 +79,63 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.15.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+
+        <!-- Configuration Processor (optional) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
     <build>
         <finalName>agent</finalName>
         <plugins>
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
-                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     <parameters>true</parameters>
+                    <compilerArgs>
+                        <arg>-Xlint:all,-varargs,-processing,-cast</arg>
+                        <arg>-Werror</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.github.spotbugs</groupId>
+                            <artifactId>spotbugs-annotations</artifactId>
+                            <version>${spotbugs.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
+            <!-- SpotBugs -->
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.9.2.0</version>
+                <version>${spotbugs.maven.plugin.version}</version>
                 <configuration>
                     <excludeFilterFile>spotbugs_ignore.xml</excludeFilterFile>
                     <addSourceDirs>true</addSourceDirs>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs</artifactId>
-                        <version>4.9.2</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>check</id>
@@ -115,10 +146,12 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Spotless -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.43.0</version>
+                <version>${spotless.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -142,7 +175,7 @@
                     </formats>
                     <java>
                         <googleJavaFormat>
-                            <version>1.22.0</version>
+                            <version>${google-java-format.version}</version>
                             <style>GOOGLE</style>
                             <reflowLongStrings>true</reflowLongStrings>
                         </googleJavaFormat>
@@ -150,25 +183,23 @@
                 </configuration>
             </plugin>
 
+            <!-- Checkstyle -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>${checkstyle.version}</version>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
-                    <suppressionsLocation>
-                        checkstyle-suppressions.xml
-                    </suppressionsLocation>
-                    <suppressionsFileExpression>
-                        checkstyle.suppressions.file
-                    </suppressionsFileExpression>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
                 </configuration>
             </plugin>
 
+            <!-- Dependency Check -->
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.0</version>
+                <version>${dependency-check.version}</version>
                 <configuration>
                     <dataDirectory>${user.home}/.depcheck-cache</dataDirectory>
                     <skipProvidedScope>true</skipProvidedScope>
@@ -176,7 +207,6 @@
                     <skipSystemScope>true</skipSystemScope>
                     <skipTestScope>true</skipTestScope>
                     <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
-                    <!-- NOTE(mba): ossIndex has a rate limit-->
                     <ossindexAnalyzerEnabled>true</ossindexAnalyzerEnabled>
                     <failBuildOnCVSS>7</failBuildOnCVSS>
                     <suppressionFile>./project-suppression.xml</suppressionFile>

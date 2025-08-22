@@ -1,28 +1,46 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
-        xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-quarkus</artifactId>
-    <version>1.9.3</version>
+    <version>1.10.0</version>
     <name>Agent Example (Quarkus)</name>
     <description>amaise Agent Example (Quarkus)</description>
+
     <properties>
+        <!-- Encoding & Java -->
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+
+        <!-- Quarkus Platform -->
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.24.2</quarkus.platform.version>
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.platform.version>3.24.5</quarkus.platform.version>
+
+        <!-- Maven Plugins Versions -->
+        <surefire.plugin.version>3.5.3</surefire.plugin.version>
+        <compiler.plugin.version>3.14.0</compiler.plugin.version>
+        <failsafe.plugin.version>3.5.3</failsafe.plugin.version>
+        <spotbugs.maven.plugin.version>4.9.3.2</spotbugs.maven.plugin.version>
+        <spotbugs.core.version>4.9.3</spotbugs.core.version>
+        <spotless.maven.plugin.version>2.43.0</spotless.maven.plugin.version>
+        <spotless.java.format.version>1.22.0</spotless.java.format.version>
+        <checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
+        <dependency.check.maven.version>12.1.3</dependency.check.maven.version>
+
+        <!-- Utility -->
         <skipITs>true</skipITs>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.release>21</maven.compiler.release>
-        <java.version>21</java.version>
-        <surefire-plugin.version>3.3.1</surefire-plugin.version>
-        <compiler-plugin.version>3.13.0</compiler-plugin.version>
     </properties>
+
     <repositories>
         <repository>
             <id>amaise</id>
@@ -30,6 +48,7 @@
             <url>https://repository.amaise.com/release</url>
         </repository>
     </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -43,20 +62,13 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Project SDK -->
         <dependency>
             <groupId>ch.legali</groupId>
             <artifactId>agent-sdk</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-scheduler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-vertx</artifactId>
-        </dependency>
+        <!-- Quarkus Core & Extensions -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
@@ -67,16 +79,27 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-scheduler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-health</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-vertx</artifactId>
+        </dependency>
+        <!-- Test -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
+            <!-- Quarkus Maven Plugin -->
             <plugin>
                 <groupId>${quarkus.platform.group-id}</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
@@ -92,18 +115,22 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Compiler -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler-plugin.version}</version>
+                <version>${compiler.plugin.version}</version>
                 <configuration>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
+
+            <!-- Surefire -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
+                <version>${surefire.plugin.version}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
@@ -111,9 +138,11 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+
+            <!-- Failsafe -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
+                <version>${failsafe.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -132,10 +161,12 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- SpotBugs -->
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.9.3.0</version>
+                <version>${spotbugs.maven.plugin.version}</version>
                 <configuration>
                     <excludeFilterFile>spotbugs_ignore.xml</excludeFilterFile>
                     <addSourceDirs>true</addSourceDirs>
@@ -144,7 +175,7 @@
                     <dependency>
                         <groupId>com.github.spotbugs</groupId>
                         <artifactId>spotbugs</artifactId>
-                        <version>4.9.3</version>
+                        <version>${spotbugs.core.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -157,10 +188,12 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Spotless (Code formatter) -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.43.0</version>
+                <version>${spotless.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -175,7 +208,7 @@
                                 <include>*.md</include>
                                 <include>.gitignore</include>
                             </includes>
-                            <trimTrailingWhitespace/>
+                            <trimTrailingWhitespace />
                             <indent>
                                 <tabs>true</tabs>
                                 <spacesPerTab>4</spacesPerTab>
@@ -184,7 +217,7 @@
                     </formats>
                     <java>
                         <googleJavaFormat>
-                            <version>1.22.0</version>
+                            <version>${spotless.java.format.version}</version>
                             <style>GOOGLE</style>
                             <reflowLongStrings>true</reflowLongStrings>
                         </googleJavaFormat>
@@ -192,25 +225,23 @@
                 </configuration>
             </plugin>
 
+            <!-- Checkstyle -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>${checkstyle.plugin.version}</version>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
-                    <suppressionsLocation>
-                        checkstyle-suppressions.xml
-                    </suppressionsLocation>
-                    <suppressionsFileExpression>
-                        checkstyle.suppressions.file
-                    </suppressionsFileExpression>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
                 </configuration>
             </plugin>
 
+            <!-- OWASP Dependency Check -->
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.0</version>
+                <version>${dependency.check.maven.version}</version>
                 <configuration>
                     <dataDirectory>${user.home}/.depcheck-cache</dataDirectory>
                     <skipProvidedScope>true</skipProvidedScope>
@@ -232,6 +263,7 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>native</id>

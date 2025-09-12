@@ -15,7 +15,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.10.0</version>
+    <version>1.12.0</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
 
@@ -34,6 +34,7 @@
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <spotbugs.maven.plugin.version>4.9.3.2</spotbugs.maven.plugin.version>
         <checkstyle.version>3.6.0</checkstyle.version>
+        <undertow.version>2.3.19.Final</undertow.version>
     </properties>
 
 

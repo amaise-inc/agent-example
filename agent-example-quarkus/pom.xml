@@ -8,7 +8,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-quarkus</artifactId>
-    <version>1.10.0</version>
+    <version>1.12.0</version>
     <name>Agent Example (Quarkus)</name>
     <description>amaise Agent Example (Quarkus)</description>
 

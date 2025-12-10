@@ -52,10 +52,11 @@ public class ExampleService {
     log.info("received start event, let's go!");
 
     this.vertx.<String>executeBlocking(
-        promise -> {
+        () -> {
           runExample();
           runExampleTwoDepartments();
           log.info("ExampleAgent run successful");
+          return null;
         });
   }
 
@@ -172,7 +173,7 @@ public class ExampleService {
     log.info("1️⃣ LegalCase has {} source files", list.size());
 
     // download file again and verify md5
-    AgentFileDTO downloadedFile = list.get(0).originalFile();
+    AgentFileDTO downloadedFile = list.getFirst().originalFile();
     try (InputStream is = this.fileService.downloadFile(downloadedFile.uri())) {
       Path target = Path.of("./" + downloadedFile.filename());
       Files.copy(is, target, StandardCopyOption.REPLACE_EXISTING);
@@ -185,7 +186,7 @@ public class ExampleService {
 
       Files.delete(target);
     } catch (NoSuchAlgorithmException | IOException e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
     }
 
     // replace sourcefile within the same legalcase, it will fail since the sourcefile does not

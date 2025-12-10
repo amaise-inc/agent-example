@@ -52,6 +52,14 @@ verify:
 show-updates:
 	${maven_cmd} versions:display-dependency-updates
 	${maven_cmd} versions:display-plugin-updates
+
+# update-deps-patch: automatically update dependencies to next available patch versions
+update-deps-patch:
+	${maven_cmd} versions:use-next-patches
+
+# update-deps-releases: automatically update dependencies to next available release versions
+update-deps-releases:
+	${maven_cmd} versions:use-next-releases
 	
 # dep-check: check dependencies
 dep-check:

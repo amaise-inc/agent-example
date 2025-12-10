@@ -3,7 +3,6 @@ package ch.legali.sdk.example;
 import ch.legali.sdk.example.config.ExampleConfig;
 import ch.legali.sdk.models.AgentLegalCaseDTO;
 import ch.legali.sdk.models.AgentSourceFileDTO;
-import ch.legali.sdk.services.FileService;
 import ch.legali.sdk.services.LegalCaseService;
 import ch.legali.sdk.services.SourceFileService;
 import java.io.IOException;
@@ -28,17 +27,14 @@ public class ExampleBulkProcessingThread implements Runnable {
 
   private final LegalCaseService legalCaseService;
   private final SourceFileService sourceFileService;
-  private final FileService fileService;
   private final ExampleConfig exampleConfig;
 
   public ExampleBulkProcessingThread(
       LegalCaseService legalCaseService,
       SourceFileService sourceFileService,
-      FileService fileService,
       ExampleConfig exampleConfig) {
     this.legalCaseService = legalCaseService;
     this.sourceFileService = sourceFileService;
-    this.fileService = fileService;
     this.exampleConfig = exampleConfig;
   }
 
@@ -93,7 +89,7 @@ public class ExampleBulkProcessingThread implements Runnable {
   }
 
   private void processFile(Path filePath) {
-    log.info("⚙\uFE0F Processing file: {}", filePath);
+    log.info("⚙️ Processing file: {}", filePath);
 
     // Create LegalCase
     String filename = this.getFilename(filePath);
@@ -108,7 +104,14 @@ public class ExampleBulkProcessingThread implements Runnable {
             .owner("DummyIamUser")
             .caseData(
                 Map.ofEntries(
-                    Map.entry("PII_FIRSTNAME", "Maria"), Map.entry("PII_LASTNAME", "Bernasconi")))
+                    Map.entry("PII_FIRSTNAME", "Maria"),
+                    Map.entry("PII_LASTNAME", "Bernasconi"),
+                    // Special use case for Switzerland: SUNET XML data can be stored directly in
+                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
+                    Map.entry(
+                        "ADDITIONAL_SUNETXML",
+                        "<?xml version=\"1.0\""
+                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
             // Optional: include the reference in the metadata
             .putMetadata("reference", filename)
             .build();
@@ -128,7 +131,7 @@ public class ExampleBulkProcessingThread implements Runnable {
     try (InputStream is = Files.newInputStream(filePath)) {
       this.sourceFileService.create(sourceFile, is);
     } catch (Exception e) {
-      log.error("🙅 Failed to create SourceFile with file " + filePath, e);
+      log.error("🙅 Failed to create SourceFile with file {} ", filePath, e);
       this.legalCaseService.delete(legalCase.legalCaseId());
     }
 

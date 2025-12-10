@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-        xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +15,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.12.0</version>
+    <version>1.14.0</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
 
@@ -167,7 +167,7 @@
                                 <include>*.md</include>
                                 <include>.gitignore</include>
                             </includes>
-                            <trimTrailingWhitespace/>
+                            <trimTrailingWhitespace />
                             <indent>
                                 <tabs>true</tabs>
                                 <spacesPerTab>4</spacesPerTab>
@@ -208,7 +208,8 @@
                     <skipSystemScope>true</skipSystemScope>
                     <skipTestScope>true</skipTestScope>
                     <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
-                    <ossindexAnalyzerEnabled>true</ossindexAnalyzerEnabled>
+                    <!-- NOTE(mba): disabled due to auth required -->
+                    <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
                     <failBuildOnCVSS>7</failBuildOnCVSS>
                     <suppressionFile>./project-suppression.xml</suppressionFile>
                 </configuration>

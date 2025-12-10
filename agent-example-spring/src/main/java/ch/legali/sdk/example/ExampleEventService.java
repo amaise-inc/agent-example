@@ -10,6 +10,7 @@ import ch.legali.sdk.services.FileService;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -112,7 +113,7 @@ public class ExampleEventService {
 
   public static class StartConnectorEvent extends ApplicationEvent {
 
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
 
     public StartConnectorEvent(ExampleEventService source) {
       super(source);
@@ -125,7 +126,7 @@ public class ExampleEventService {
 
   @EventListener
   public void handle(PongEvent event) {
-    log.info("🏓 PingPong Event received:\n" + event.message());
+    log.info("🏓 PingPong Event received:\n {}", event.message());
     this.eventService.acknowledge(event);
   }
 
@@ -139,56 +140,47 @@ public class ExampleEventService {
             .findFirst()
             .orElseThrow();
     log.info(
-        "LegalCaseCreatedEvent\n "
-            + "Tenant: "
-            + department
-            + " ("
-            + event.tenantId()
-            + "): "
-            + "\n"
-            + event.legalCase().caseData().get("PII_LASTNAME")
-            + " "
-            + event.legalCase().caseData().get("PII_LASTNAME"));
+        "LegalCaseCreatedEvent\n Tenant: {} ({}): \n{} {}",
+        department,
+        event.tenantId(),
+        event.legalCase().caseData().get("PII_LASTNAME"),
+        event.legalCase().caseData().get("PII_LASTNAME"));
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(LegalCaseStatusChangedEvent event) {
-    log.info("LegalCaseStatusChangedEvent: " + "\n" + event.legalCaseId() + " " + event.status());
+    log.info("LegalCaseStatusChangedEvent: \n{} {}", event.legalCaseId(), event.status());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(LegalCaseUpdatedEvent event) {
     log.info(
-        "LegalCaseUpdatedEvent: "
-            + "\n"
-            + event.legalCase().caseData().get("PII_LASTNAME")
-            + " "
-            + event.legalCase().caseData().get("PII_FIRSTNAME"));
+        "LegalCaseUpdatedEvent: \n{} {}",
+        event.legalCase().caseData().get("PII_LASTNAME"),
+        event.legalCase().caseData().get("PII_FIRSTNAME"));
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(LegalCaseReadyEvent event) {
     log.info(
-        "LegalCaseReadyEvent: "
-            + "\nlegalCaseId: "
-            + event.legalCaseId()
-            + "\nlegalCaseUrl: "
-            + event.legalCaseUrl());
+        "LegalCaseReadyEvent: \nlegalCaseId: {}\nlegalCaseUrl: {}",
+        event.legalCaseId(),
+        event.legalCaseUrl());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(LegalCaseDeletedEvent event) {
-    log.info("LegalCaseDeletedEvent: " + "\n" + event.legalCase().legalCaseId());
+    log.info("LegalCaseDeletedEvent: \n{}", event.legalCase().legalCaseId());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(NotebookUpdatedEvent event) {
-    log.info("📓 NotebookUpdatedEvent: " + "\n" + event.notebook());
+    log.info("NotebookUpdatedEvent: \n{}", event.notebook());
     this.eventService.acknowledge(event);
   }
 
@@ -196,34 +188,34 @@ public class ExampleEventService {
 
   @EventListener
   public void handle(SourceFileCreatedEvent event) {
-    log.info("SourceFileCreatedEvent: " + "\n" + event.sourceFile().sourceFileId());
+    log.info("SourceFileCreatedEvent: \n{}", event.sourceFile().sourceFileId());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(SourceFileUpdatedEvent event) {
-    log.info("SourceFileUpdatedEvent: " + "\n" + event.sourceFile().folder());
+    log.info("SourceFileUpdatedEvent: \n{}", event.sourceFile().folder());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(SourceFileReadyEvent event) {
-    log.info("SourceFileReadyEvent: " + "\n" + event.sourceFileId());
+    log.info("SourceFileReadyEvent: \n{}", event.sourceFileId());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(SourceFileFailedEvent event) {
-    log.info("SourceFileFailedEvent: " + "\n" + event.sourceFileId());
+    log.info("SourceFileFailedEvent: \n{}", event.sourceFileId());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(ExportCreatedEvent event) {
-    log.info("🍻  ExportCreatedEvent: " + event.export().exportId());
-    log.info("    Recipient : " + event.export().recipient());
-    log.info("    Case Id   : " + event.export().legalCaseId());
-    log.info("    Timestamp : " + event.ts());
+    log.info("ExportCreatedEvent: {}", event.export().exportId());
+    log.info("    Recipient : {}", event.export().recipient());
+    log.info("    Case Id   : {}", event.export().legalCaseId());
+    log.info("    Timestamp : {}", event.ts());
 
     AgentFileDTO fileToDownload;
     if (event.export().file().contentLength() > (THRESHOLD_GIGABYTES * 1000000000)
@@ -238,7 +230,7 @@ public class ExampleEventService {
       Files.copy(
           is, Path.of("./temp/" + fileToDownload.filename()), StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
     }
     log.info("⤵️  Downloaded file: {}", fileToDownload.filename());
 
@@ -250,11 +242,10 @@ public class ExampleEventService {
           .forEach(
               reference ->
                   log.info(
-                      String.format(
-                          "    SourceFileId: %36s PaginationNo: %4s PaginationId: %8s",
-                          reference.sourceFileId(),
-                          reference.paginationNo(),
-                          reference.paginationId())));
+                      "    SourceFileId: {} PaginationNo: {} PaginationId: {}",
+                      reference.sourceFileId(),
+                      reference.paginationNo(),
+                      reference.paginationId()));
     }
 
     this.eventService.acknowledge(event);
@@ -263,95 +254,66 @@ public class ExampleEventService {
   @EventListener
   public void handle(ExportSharedEvent event) {
     log.info(
-        "✉️ ExportSharedEvent: "
-            + event.export().exportId()
-            + "\n"
-            + event.method()
-            + "\n"
-            + event.export().file().uri()
-            + "\n"
-            + event.email());
+        "ExportSharedEvent: {}\n{}\n{}\n{}",
+        event.export().exportId(),
+        event.method(),
+        event.export().file().uri(),
+        event.email());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(ExportViewedEvent event) {
-    log.info(
-        "📖 ExportViewedEvent: "
-            + "\n"
-            + event.export().legalCaseId()
-            + " "
-            + event.user().remoteAddr());
+    log.info("ExportViewedEvent: \n{} {}", event.export().legalCaseId(), event.user().remoteAddr());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(AnnotationCreatedEvent event) {
     log.info(
-        "📖 AnnotationCreatedEvent: "
-            + "\n"
-            + event.annotation().legalCaseId()
-            + " "
-            + event.user().remoteAddr()
-            + "\nXFDF: "
-            + event.annotation().xfdf());
+        "AnnotationCreatedEvent: \n{} {}\nXFDF: {}",
+        event.annotation().legalCaseId(),
+        event.user().remoteAddr(),
+        event.annotation().xfdf());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(AnnotationUpdatedEvent event) {
     log.info(
-        "📖 AnnotationUpdatedEvent: "
-            + "\n"
-            + event.annotation().legalCaseId()
-            + " "
-            + event.user().remoteAddr()
-            + "\nXFDF: "
-            + event.annotation().xfdf());
+        "AnnotationUpdatedEvent: \n{} {}\nXFDF: {}",
+        event.annotation().legalCaseId(),
+        event.user().remoteAddr(),
+        event.annotation().xfdf());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(AnnotationDeletedEvent event) {
     log.info(
-        "📖 AnnotationDeletedEvent: "
-            + "\n"
-            + event.annotation().legalCaseId()
-            + " "
-            + event.user().remoteAddr()
-            + "\nAnnotation XFDF: "
-            + event.annotation().xfdf()
-            + "\nSourceFile XFDF: "
-            + event.annotation().sourceFileXfdf());
+        "AnnotationDeletedEvent: \n{} {}\nAnnotation XFDF: {}\nSourceFile XFDF: {}",
+        event.annotation().legalCaseId(),
+        event.user().remoteAddr(),
+        event.annotation().xfdf(),
+        event.annotation().sourceFileXfdf());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(TicketCreatedEvent event) {
     log.info(
-        "🎫 TicketCreatedEvent: "
-            + "\n"
-            + "Subject: "
-            + event.subject()
-            + "\n"
-            + "Ticket Request: "
-            + event.question());
+        "TicketCreatedEvent: \nSubject: {}\nTicket Request: {}", event.subject(), event.question());
     this.eventService.acknowledge(event);
   }
 
   @EventListener
   public void handle(TicketUpdatedEvent event) {
     log.info(
-        "🎫 TicketUpdatedEvent: "
-            + "\n"
-            + "Status: "
-            + event.status()
-            + "\n"
-            + (!event.ticket().attachments().isEmpty()
-                ? "Ticket attachment URI(s):"
-                    + "\n"
-                    + String.join("\n", event.ticket().attachments())
-                : ""));
+        "TicketUpdatedEvent: \nStatus: {}\n{}",
+        event.status(),
+        !event.ticket().attachments().isEmpty()
+            ? "Ticket attachment URI(s):" + "\n" + String.join("\n", event.ticket().attachments())
+            : "");
 
     this.eventService.acknowledge(event);
   }

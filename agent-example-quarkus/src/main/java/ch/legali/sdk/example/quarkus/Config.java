@@ -5,6 +5,7 @@ import ch.legali.sdk.internal.Auth0AccessTokenRequestInterceptor;
 import ch.legali.sdk.internal.AuthenticationRequestInterceptor;
 import ch.legali.sdk.internal.HealthService;
 import ch.legali.sdk.internal.InternalFileService;
+import ch.legali.sdk.internal.client.DashboardClient;
 import ch.legali.sdk.internal.client.EventClient;
 import ch.legali.sdk.internal.client.ExportClient;
 import ch.legali.sdk.internal.client.FileProxyClient;
@@ -14,6 +15,7 @@ import ch.legali.sdk.internal.client.SourceFileClient;
 import ch.legali.sdk.internal.config.ClientConfiguration;
 import ch.legali.sdk.internal.config.ConfigService;
 import ch.legali.sdk.internal.config.HttpClientConfiguration;
+import ch.legali.sdk.services.DashboardService;
 import ch.legali.sdk.services.EventService;
 import ch.legali.sdk.services.ExportService;
 import ch.legali.sdk.services.FileService;
@@ -137,6 +139,14 @@ public class Config {
 
   @Produces
   @Singleton
+  public DashboardClient dashboardClient(
+      ClientConfiguration clientConfiguration,
+      AuthenticationRequestInterceptor authenticationRequestInterceptor) {
+    return clientConfiguration.dashboardClient(authenticationRequestInterceptor);
+  }
+
+  @Produces
+  @Singleton
   public EventClient eventClient(
       ClientConfiguration clientConfiguration,
       AuthenticationRequestInterceptor authenticationRequestInterceptor) {
@@ -203,6 +213,12 @@ public class Config {
   public LegalCaseService legalCaseService(
       LegalCaseClient legalCaseClient, ConfigService configService) {
     return new LegalCaseService(legalCaseClient, configService);
+  }
+
+  @Produces
+  @Singleton
+  public DashboardService dashboardService(DashboardClient legalCaseClient) {
+    return new DashboardService(legalCaseClient);
   }
 
   @Produces

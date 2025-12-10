@@ -95,7 +95,7 @@ public class ExampleAgentMetadataThread implements Runnable {
     /*
      * To keep a constant memory footprint on the agent, the SDK uses a FileObject and
      * not a ByteArrayResource. PDF files can be large if they contain images (>
-     * 500MB), in multi-threaded mode this leads to unwanted spikes in memory usage.
+     * 500MB), in multithreaded mode this leads to unwanted spikes in memory usage.
      * Ideally the files are chunked downloaded to a temporary file and then passed to
      * the SDK.
      */
@@ -149,16 +149,6 @@ public class ExampleAgentMetadataThread implements Runnable {
     // NOTE: will always time out, if processing is disabled
     if (status.equals(SourceFileStatus.ERROR) || status.equals(SourceFileStatus.TIMEOUT)) {
       log.warn("💥 amaise was not fast enough to process this file {}", sourceFile.sourceFileId());
-    }
-  }
-
-  public void cleanup() {
-    List<AgentLegalCaseDTO> allCases = this.legalCaseService.list();
-    for (AgentLegalCaseDTO currentLegalCase : allCases) {
-      if ("example-agent".equals(currentLegalCase.metadata().getOrDefault("legali.uploader", ""))) {
-        log.info("🧹 Cleaning up {}", currentLegalCase.legalCaseId());
-        this.legalCaseService.delete(currentLegalCase.legalCaseId());
-      }
     }
   }
 }

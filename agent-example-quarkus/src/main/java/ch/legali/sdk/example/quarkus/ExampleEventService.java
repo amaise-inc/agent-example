@@ -95,7 +95,7 @@ public class ExampleEventService {
 
   @ConsumeEvent(value = "PongEvent")
   void consume(PongEvent event) {
-    log.info("got pong event " + event);
+    log.info("got pong event {}", event);
     this.eventService.acknowledge(event);
   }
 
@@ -108,16 +108,11 @@ public class ExampleEventService {
             .findFirst()
             .orElseThrow();
     log.info(
-        "LegalCaseCreatedEvent\n "
-            + "Tenant: "
-            + department
-            + " ("
-            + event.tenantId()
-            + "): "
-            + "\n"
-            + event.legalCase().caseData().get("PII_FIRSTNAME")
-            + " "
-            + event.legalCase().caseData().get("PII_LASTNAME"));
+        "LegalCaseCreatedEvent\n Tenant: {} ({}): \n{} {}",
+        department,
+        event.tenantId(),
+        event.legalCase().caseData().get("PII_FIRSTNAME"),
+        event.legalCase().caseData().get("PII_LASTNAME"));
     this.eventService.acknowledge(event);
   }
 }

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -48,7 +47,10 @@ public class ExampleThread implements Runnable {
 
   private final ExampleAgentMetadataThread exampleAgentMetadataThread;
   private final ExampleBulkProcessingThread exampleBulkProcessingThread;
+  private final ExampleSourceFileProcessingThread exampleSourceFileProcessingThread;
+  private final ExampleDashboardProcessingThread exampleDashboardProcessingThread;
 
+  @SuppressWarnings("checkstyle:ParameterNumber")
   public ExampleThread(
       LegalCaseService legalCaseService,
       SourceFileService sourceFileService,
@@ -56,6 +58,8 @@ public class ExampleThread implements Runnable {
       FileService fileService,
       ExampleAgentMetadataThread exampleAgentMetadataThread,
       ExampleBulkProcessingThread exampleBulkProcessingThread,
+      ExampleSourceFileProcessingThread exampleSourceFileProcessingThread,
+      ExampleDashboardProcessingThread exampleDashboardProcessingThread,
       ExampleConfig exampleConfig) {
     this.legalCaseService = legalCaseService;
     this.sourceFileService = sourceFileService;
@@ -67,6 +71,10 @@ public class ExampleThread implements Runnable {
     this.exampleAgentMetadataThread = exampleAgentMetadataThread;
     // used to test bulk processing, see below
     this.exampleBulkProcessingThread = exampleBulkProcessingThread;
+    // used for automated file processing
+    this.exampleSourceFileProcessingThread = exampleSourceFileProcessingThread;
+    // used for automated dashboard processing
+    this.exampleDashboardProcessingThread = exampleDashboardProcessingThread;
   }
 
   @Override
@@ -79,6 +87,9 @@ public class ExampleThread implements Runnable {
       log.info("ExampleAgent run successful");
     }
 
+    // IMPORTANT: To run any of the special example threads below, we recommend commenting out the
+    // default while loop above to avoid conflicts.
+
     // Uncomment to also run the example of the ExampleAgentMetadataThread
     // See ExampleAgentMetadataThread before uncommenting for further instructions
     // this.exampleAgentMetadataThreadBean.run();
@@ -86,6 +97,14 @@ public class ExampleThread implements Runnable {
     // Uncomment to also run the example of the ExampleBulkProcessingThread
     // See ExampleBulkProcessingThread before uncommenting for further instructions
     // this.exampleBulkProcessingThread.run();
+
+    // Running automated file processing thread
+    // See ExampleSourceFileProcessingThread before uncommenting for further instructions
+    // this.exampleSourceFileProcessingThread.run();
+
+    // Running automated dashboard processing thread
+    // See ExampleDashboardProcessingThread before uncommenting for further instructions
+    // this.exampleDashboardProcessingThread.run();
   }
 
   /**
@@ -104,7 +123,15 @@ public class ExampleThread implements Runnable {
                 // Generally speaking, if the case belongs to a person, PII_FIRSTNAME and
                 // PII_LASTNAME should be set. If the case belongs to a company or any other case,
                 // PII_COMPANY should be set.
-                Map.ofEntries(Map.entry("PII_FIRSTNAME", "John"), Map.entry("PII_LASTNAME", "Doe")))
+                Map.ofEntries(
+                    Map.entry("PII_FIRSTNAME", "John"),
+                    Map.entry("PII_LASTNAME", "Doe"),
+                    // Special use case for Switzerland: SUNET XML data can be stored directly in
+                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
+                    Map.entry(
+                        "ADDITIONAL_SUNETXML",
+                        "<?xml version=\"1.0\""
+                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")
@@ -129,7 +156,7 @@ public class ExampleThread implements Runnable {
     /*
      * To keep a constant memory footprint on the agent, the SDK uses a FileObject and
      * not a ByteArrayResource. PDF files can be large if they contain images (>
-     * 500MB), in multi-threaded mode this leads to unwanted spikes in memory usage.
+     * 500MB), in multithreaded mode this leads to unwanted spikes in memory usage.
      * Ideally the files are chunked downloaded to a temporary file and then passed to
      * the SDK.
      */
@@ -221,7 +248,7 @@ public class ExampleThread implements Runnable {
     log.info("1️⃣ LegalCase has {} source files", list.size());
 
     // download file again and verify md5
-    AgentFileDTO downloadedFile = list.get(0).originalFile();
+    AgentFileDTO downloadedFile = list.getFirst().originalFile();
     try (InputStream is = this.fileService.downloadFile(downloadedFile.uri())) {
       Path target = Path.of("./" + downloadedFile.filename());
       Files.copy(is, target, StandardCopyOption.REPLACE_EXISTING);
@@ -235,7 +262,7 @@ public class ExampleThread implements Runnable {
 
       Files.delete(target);
     } catch (NoSuchAlgorithmException | IOException e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
     }
 
     // replace sourcefile within the same legalcase, it will fail since the sourcefile does not
@@ -341,7 +368,15 @@ public class ExampleThread implements Runnable {
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())
             .caseData(
-                Map.ofEntries(Map.entry("PII_FIRSTNAME", "John"), Map.entry("PII_LASTNAME", "Doe")))
+                Map.ofEntries(
+                    Map.entry("PII_FIRSTNAME", "John"),
+                    Map.entry("PII_LASTNAME", "Doe"),
+                    // Special use case for Switzerland: SUNET XML data can be stored directly in
+                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
+                    Map.entry(
+                        "ADDITIONAL_SUNETXML",
+                        "<?xml version=\"1.0\""
+                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")
@@ -431,8 +466,7 @@ public class ExampleThread implements Runnable {
     try {
       if (this.exampleConfig.getFilesPath() != null
           && !this.exampleConfig.getFilesPath().isBlank()) {
-        List<Path> files =
-            Files.list(Paths.get(this.exampleConfig.getFilesPath())).collect(Collectors.toList());
+        List<Path> files = Files.list(Paths.get(this.exampleConfig.getFilesPath())).toList();
         int randomIndex = (int) Math.floor(Math.random() * files.size());
         Path f = files.get(randomIndex);
         log.info(
@@ -447,7 +481,7 @@ public class ExampleThread implements Runnable {
       ClassPathResource cp = new ClassPathResource("sample.pdf");
       return cp.getFile().toPath();
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
       return null;
     }
   }
@@ -471,19 +505,20 @@ public class ExampleThread implements Runnable {
    * @return String an example xfdf file
    */
   private String getExampleXfdf() {
-    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-               + "<xfdf xmlns=\"http://ns.adobe.com/xfdf/\">\n"
-               + "    <annots>\n"
-               + "        <highlight page=\"0\" rect=\"75.071,516.351,289.625,531.103\""
-               + " color=\"#FF9800\"\n"
-               + "            name=\"1234567\" title=\"test title\" subject=\"hello world\"\n"
-               + "            date=\"D:20230706160122+02'00'\" opacity=\"0.5\""
-               + " creationdate=\"D:20230706160122+02'00'\"\n"
-               + "           "
-               + " coords=\"75.32109928446837,531.1031977120231,289.62462070530665,524.6739848693966,75.07139920622396,522.7800005529471,289.37492062706224,516.3507877103207\">\n"
-               + "            <contents>Hello World</contents>\n"
-               + "        </highlight>\n"
-               + "    </annots>\n"
-               + "</xfdf>";
+    return """
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/">
+    <annots>
+        <highlight page="0" rect="75.071,516.351,289.625,531.103"\
+ color="#FF9800"
+            name="1234567" title="test title" subject="hello world"
+            date="D:20230706160122+02'00'" opacity="0.5"\
+ creationdate="D:20230706160122+02'00'"
+           \
+ coords="75.32109928446837,531.1031977120231,289.62462070530665,524.6739848693966,75.07139920622396,522.7800005529471,289.37492062706224,516.3507877103207">
+            <contents>Hello World</contents>
+        </highlight>
+    </annots>
+</xfdf>""";
   }
 }

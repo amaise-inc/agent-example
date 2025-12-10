@@ -21,6 +21,8 @@ public class ExampleConfig {
   /** Map of workspaces that reflect departments . */
   private Map<String, UUID> tenants = Map.of();
 
+  private UUID dashboardId;
+
   public int getIterations() {
     return this.iterations;
   }
@@ -51,5 +53,13 @@ public class ExampleConfig {
 
   public void setTenants(Map<String, UUID> tenants) {
     this.tenants = tenants;
+  }
+
+  public UUID getDashboardId() {
+    return this.dashboardId;
+  }
+
+  public void setDashboardId(UUID dashboardId) {
+    this.dashboardId = dashboardId;
   }
 }

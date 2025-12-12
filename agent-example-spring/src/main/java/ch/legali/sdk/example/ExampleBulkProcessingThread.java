@@ -104,14 +104,7 @@ public class ExampleBulkProcessingThread implements Runnable {
             .owner("DummyIamUser")
             .caseData(
                 Map.ofEntries(
-                    Map.entry("PII_FIRSTNAME", "Maria"),
-                    Map.entry("PII_LASTNAME", "Bernasconi"),
-                    // Special use case for Switzerland: SUNET XML data can be stored directly in
-                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
-                    Map.entry(
-                        "ADDITIONAL_SUNETXML",
-                        "<?xml version=\"1.0\""
-                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
+                    Map.entry("PII_FIRSTNAME", "Maria"), Map.entry("PII_LASTNAME", "Bernasconi")))
             // Optional: include the reference in the metadata
             .putMetadata("reference", filename)
             .build();
@@ -126,6 +119,10 @@ public class ExampleBulkProcessingThread implements Runnable {
             .folder("unknown")
             // Use filename as reference
             .fileReference(filename)
+            // Optionally, pass the structured data for this document stored in your system (e.g.
+            // Sunet XML for Switzerland)
+            .structuredData(
+                "<?xml version=\"1.0 encoding=\"UTF-8\"?><claimReport>...</claimReport>")
             .build();
 
     try (InputStream is = Files.newInputStream(filePath)) {

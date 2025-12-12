@@ -109,14 +109,7 @@ public class ExampleDashboardProcessingThread implements Runnable {
             .legalCaseId(UUID.randomUUID())
             .caseData(
                 Map.ofEntries(
-                    Map.entry("PII_FIRSTNAME", "Maria"),
-                    Map.entry("PII_LASTNAME", "Bernasconi"),
-                    // Special use case for Switzerland: SUNET XML data can be stored directly in
-                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
-                    Map.entry(
-                        "ADDITIONAL_SUNETXML",
-                        "<?xml version=\"1.0\""
-                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
+                    Map.entry("PII_FIRSTNAME", "Maria"), Map.entry("PII_LASTNAME", "Bernasconi")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")
@@ -143,6 +136,10 @@ public class ExampleDashboardProcessingThread implements Runnable {
             // Use filename as reference
             .fileReference("sample.pdf")
             .putMetadata("legali.pipeline.disabled", "false") // Enable pipeline processing
+            // Optionally, pass the structured data for this document stored in your system (e.g.
+            // Sunet XML for Switzerland)
+            .structuredData(
+                "<?xml version=\"1.0 encoding=\"UTF-8\"?><claimReport>...</claimReport>")
             .build();
 
     log.info("All done, waiting for LegalCaseReadyEvent...");

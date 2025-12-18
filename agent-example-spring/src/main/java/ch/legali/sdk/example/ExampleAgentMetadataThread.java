@@ -130,6 +130,10 @@ public class ExampleAgentMetadataThread implements Runnable {
 
             // if a property is set to an empty string, it is ignored and the default is used
             .putMetadata("legali.metadata.some-property", "")
+            // Optionally, pass the structured data for this document stored in your system (e.g.
+            // Sunet XML for Switzerland)
+            .structuredData(
+                "<?xml version=\"1.0 encoding=\"UTF-8\"?><claimReport>...</claimReport>")
             .build();
 
     log.info("🧾  Creating SourceFile");

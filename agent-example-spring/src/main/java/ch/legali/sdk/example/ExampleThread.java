@@ -123,15 +123,7 @@ public class ExampleThread implements Runnable {
                 // Generally speaking, if the case belongs to a person, PII_FIRSTNAME and
                 // PII_LASTNAME should be set. If the case belongs to a company or any other case,
                 // PII_COMPANY should be set.
-                Map.ofEntries(
-                    Map.entry("PII_FIRSTNAME", "John"),
-                    Map.entry("PII_LASTNAME", "Doe"),
-                    // Special use case for Switzerland: SUNET XML data can be stored directly in
-                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
-                    Map.entry(
-                        "ADDITIONAL_SUNETXML",
-                        "<?xml version=\"1.0\""
-                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
+                Map.ofEntries(Map.entry("PII_FIRSTNAME", "John"), Map.entry("PII_LASTNAME", "Doe")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")
@@ -191,8 +183,12 @@ public class ExampleThread implements Runnable {
             // if a property is set to an empty string, it is ignored and the default is used
             .putMetadata("legali.metadata.some-property", "")
 
-            // annotations in XFDF format
+            // Annotations in XFDF format
             .annotationsXfdf(this.getExampleXfdf())
+            // Pass the structured data for this document stored in your system (e.g.
+            // Sunet XML for Switzerland)
+            .structuredData(
+                "<?xml version=\"1.0 encoding=\"UTF-8\"?><claimReport>...</claimReport>")
             .build();
 
     log.info("🧾  Creating SourceFile");
@@ -368,15 +364,7 @@ public class ExampleThread implements Runnable {
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())
             .caseData(
-                Map.ofEntries(
-                    Map.entry("PII_FIRSTNAME", "John"),
-                    Map.entry("PII_LASTNAME", "Doe"),
-                    // Special use case for Switzerland: SUNET XML data can be stored directly in
-                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
-                    Map.entry(
-                        "ADDITIONAL_SUNETXML",
-                        "<?xml version=\"1.0\""
-                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
+                Map.ofEntries(Map.entry("PII_FIRSTNAME", "John"), Map.entry("PII_LASTNAME", "Doe")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")

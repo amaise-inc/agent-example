@@ -16,11 +16,18 @@ import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component
+@Qualifier("ExampleDashboardProcessingThread")
+@ConditionalOnProperty(
+    value = "legali.example.enable-dashboard-processing-thread",
+    havingValue = "true",
+    matchIfMissing = false)
 public class ExampleDashboardProcessingThread implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(ExampleDashboardProcessingThread.class);
@@ -87,6 +94,17 @@ public class ExampleDashboardProcessingThread implements Runnable {
                     .append(System.lineSeparator()));
     log.info("Question-Answer Pairs:%n%s", questionAnswerPairs.toString());
 
+    // Handle actions (e.g., send e-mails, create tasks, etc.)
+    dashboard
+        .actions()
+        .forEach(
+            action ->
+                log.info(
+                    "Handling action: {} with params {} via item {}",
+                    action.name(),
+                    action.params(),
+                    action.itemId()));
+
     /* IMPORTANT: Manage data lifecycle
      * The data lifecycle is fully managed by you, delete the legal case according to
      * your internal policies.
@@ -109,14 +127,7 @@ public class ExampleDashboardProcessingThread implements Runnable {
             .legalCaseId(UUID.randomUUID())
             .caseData(
                 Map.ofEntries(
-                    Map.entry("PII_FIRSTNAME", "Maria"),
-                    Map.entry("PII_LASTNAME", "Bernasconi"),
-                    // Special use case for Switzerland: SUNET XML data can be stored directly in
-                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
-                    Map.entry(
-                        "ADDITIONAL_SUNETXML",
-                        "<?xml version=\"1.0\""
-                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
+                    Map.entry("PII_FIRSTNAME", "Maria"), Map.entry("PII_LASTNAME", "Bernasconi")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")
@@ -143,6 +154,10 @@ public class ExampleDashboardProcessingThread implements Runnable {
             // Use filename as reference
             .fileReference("sample.pdf")
             .putMetadata("legali.pipeline.disabled", "false") // Enable pipeline processing
+            // Optionally, pass the structured data for this document stored in your system (e.g.
+            // Sunet XML for Switzerland)
+            .structuredData(
+                "<?xml version=\"1.0 encoding=\"UTF-8\"?><claimReport>...</claimReport>")
             .build();
 
     log.info("All done, waiting for LegalCaseReadyEvent...");

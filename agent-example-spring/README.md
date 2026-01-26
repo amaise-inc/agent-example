@@ -11,16 +11,18 @@ In the `ExampleThread.java` and `ExampleEventService.java`, you see examples of 
 - After the Spring Boot application is initialized, the agent connects to the amaise cloud.
 - If the connection can be established, a `StartConnectorEvent` Event is published.
 - This has the following effects:
-	- Upon receiving this event, the `ExampleService` runs `ExampleThread` that creates legal cases and adds source files on the amaise workspace.
-	- The `ExampleEventService` starts listening to events triggered on the API.
-		- As an example, he requests a `pong`-Event from the API.
-		- This pong will be sent by the API asynchronously and be visible in the EventHandler
+  - Upon receiving this event, the `ExampleService` runs `ExampleThread` that creates legal cases and adds source files on the amaise workspace.
+  - The `ExampleEventService` starts listening to events triggered on the API.
+    - As an example, he requests a `pong`-Event from the API.
+    - This pong will be sent by the API asynchronously and be visible in the EventHandler
 - All SDK entities and methods contain JavaDoc annotations.
 
 ### Build, run, and monitor
+
 See Makefile for a reference of build targets.
 
 The following endpoints are provided in the Example Agent.
+
 ```
 # Liveness (agent is up)
 http://localhost:8085/actuator/health/liveness
@@ -41,13 +43,13 @@ http://localhost:8085/actuator/prometheus
 &nbsp;
 &nbsp;
 
-
 ## References
+
 ### Configuration and Deployment
 
 All configurations can be set as environment variables by Spring Boot configuration convention.
 
-````
+```
 # Example Agent Config
 # Iterations and parallel threads
 legali.example.iterations=1
@@ -97,4 +99,4 @@ management.endpoint.health.probes.enabled=true
 management.health.livenessState.enabled=true
 management.health.readinessState.enabled=true
 management.endpoint.health.group.readiness.include=readinessState,agent
-````
+```

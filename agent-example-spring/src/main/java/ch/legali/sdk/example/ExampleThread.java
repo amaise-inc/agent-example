@@ -26,10 +26,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -45,10 +48,7 @@ public class ExampleThread implements Runnable {
   private final FileService fileService;
   private final ExampleConfig exampleConfig;
 
-  private final ExampleAgentMetadataThread exampleAgentMetadataThread;
-  private final ExampleBulkProcessingThread exampleBulkProcessingThread;
-  private final ExampleSourceFileProcessingThread exampleSourceFileProcessingThread;
-  private final ExampleDashboardProcessingThread exampleDashboardProcessingThread;
+  private Optional<Runnable> optionalExampleSpecialThread;
 
   @SuppressWarnings("checkstyle:ParameterNumber")
   public ExampleThread(
@@ -56,10 +56,21 @@ public class ExampleThread implements Runnable {
       SourceFileService sourceFileService,
       ExportService exportService,
       FileService fileService,
-      ExampleAgentMetadataThread exampleAgentMetadataThread,
-      ExampleBulkProcessingThread exampleBulkProcessingThread,
-      ExampleSourceFileProcessingThread exampleSourceFileProcessingThread,
-      ExampleDashboardProcessingThread exampleDashboardProcessingThread,
+      /* Special example threads available:
+       - ExampleAgentMetadataThread: demonstrates how to create legal cases and sourcefiles with
+           specific metadata, then lets the sourcefiles process and verifies the results.
+       - ExampleBulkProcessingThread: demonstrates how to bulk upload files from a local folder
+           into legal cases.
+       - ExampleSourceFileProcessingThread: demonstrates how to listen to sourcefile processing
+           events and retrieve processed sourcefiles.
+       - ExampleDashboardProcessingThread: demonstrates how to listen to legalcase processing
+           events and retrieve dashboards.
+
+       IMPORTANT: Processing threads that use EventListeners require to be enabled in
+       the application.properties file, e.g. legali.example.enable-sourcefile-processing-thread=false
+      */
+      @Autowired(required = false) @Qualifier("Dummy")
+          Optional<Runnable> optionalExampleSpecialThread,
       ExampleConfig exampleConfig) {
     this.legalCaseService = legalCaseService;
     this.sourceFileService = sourceFileService;
@@ -67,14 +78,7 @@ public class ExampleThread implements Runnable {
     this.fileService = fileService;
     this.exampleConfig = exampleConfig;
 
-    // used to test metadata, see below
-    this.exampleAgentMetadataThread = exampleAgentMetadataThread;
-    // used to test bulk processing, see below
-    this.exampleBulkProcessingThread = exampleBulkProcessingThread;
-    // used for automated file processing
-    this.exampleSourceFileProcessingThread = exampleSourceFileProcessingThread;
-    // used for automated dashboard processing
-    this.exampleDashboardProcessingThread = exampleDashboardProcessingThread;
+    this.optionalExampleSpecialThread = optionalExampleSpecialThread;
   }
 
   @Override
@@ -87,24 +91,13 @@ public class ExampleThread implements Runnable {
       log.info("ExampleAgent run successful");
     }
 
-    // IMPORTANT: To run any of the special example threads below, we recommend commenting out the
-    // default while loop above to avoid conflicts.
-
-    // Uncomment to also run the example of the ExampleAgentMetadataThread
-    // See ExampleAgentMetadataThread before uncommenting for further instructions
-    // this.exampleAgentMetadataThreadBean.run();
-
-    // Uncomment to also run the example of the ExampleBulkProcessingThread
-    // See ExampleBulkProcessingThread before uncommenting for further instructions
-    // this.exampleBulkProcessingThread.run();
-
-    // Running automated file processing thread
-    // See ExampleSourceFileProcessingThread before uncommenting for further instructions
-    // this.exampleSourceFileProcessingThread.run();
-
-    // Running automated dashboard processing thread
-    // See ExampleDashboardProcessingThread before uncommenting for further instructions
-    // this.exampleDashboardProcessingThread.run();
+    // Run special thread
+    if (this.optionalExampleSpecialThread.isPresent()) {
+      log.info(
+          "Running special example thread: {}",
+          this.optionalExampleSpecialThread.get().getClass().getSimpleName());
+      this.optionalExampleSpecialThread.get().run();
+    }
   }
 
   /**
@@ -123,15 +116,7 @@ public class ExampleThread implements Runnable {
                 // Generally speaking, if the case belongs to a person, PII_FIRSTNAME and
                 // PII_LASTNAME should be set. If the case belongs to a company or any other case,
                 // PII_COMPANY should be set.
-                Map.ofEntries(
-                    Map.entry("PII_FIRSTNAME", "John"),
-                    Map.entry("PII_LASTNAME", "Doe"),
-                    // Special use case for Switzerland: SUNET XML data can be stored directly in
-                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
-                    Map.entry(
-                        "ADDITIONAL_SUNETXML",
-                        "<?xml version=\"1.0\""
-                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
+                Map.ofEntries(Map.entry("PII_FIRSTNAME", "John"), Map.entry("PII_LASTNAME", "Doe")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")
@@ -191,8 +176,12 @@ public class ExampleThread implements Runnable {
             // if a property is set to an empty string, it is ignored and the default is used
             .putMetadata("legali.metadata.some-property", "")
 
-            // annotations in XFDF format
+            // Annotations in XFDF format
             .annotationsXfdf(this.getExampleXfdf())
+            // Pass the structured data for this document stored in your system (e.g.
+            // Sunet XML for Switzerland)
+            .structuredData(
+                "<?xml version=\"1.0 encoding=\"UTF-8\"?><claimReport>...</claimReport>")
             .build();
 
     log.info("🧾  Creating SourceFile");
@@ -368,15 +357,7 @@ public class ExampleThread implements Runnable {
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())
             .caseData(
-                Map.ofEntries(
-                    Map.entry("PII_FIRSTNAME", "John"),
-                    Map.entry("PII_LASTNAME", "Doe"),
-                    // Special use case for Switzerland: SUNET XML data can be stored directly in
-                    // the key 'ADDITIONAL_SUNETXML' (it does not replace mapping other case data).
-                    Map.entry(
-                        "ADDITIONAL_SUNETXML",
-                        "<?xml version=\"1.0\""
-                            + " encoding=\"UTF-8\"?><claimReport>...</claimReport>")))
+                Map.ofEntries(Map.entry("PII_FIRSTNAME", "John"), Map.entry("PII_LASTNAME", "Doe")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")

@@ -1,9 +1,11 @@
 # File Transfer API
+
 The amaise SDK uses presigned URLs to upload and download files directly to AWS for efficiency and stability.
 
 Based on the data location of the tenant, the presigned URLs will point eihter to `https://data.amaise.com/` (Germany), `https://data-ch.amaise.com/` (Switzerland) or `https://data-us.amaise.com` (United States).
 
 ## Flow for File Download
+
 **The SDK requests a presigned URL from the amaise files API. HTTP 307 with the presigned URL in the location header is returned.**
 
 ```
@@ -33,7 +35,9 @@ RESPONSE HEADERS:
 	x-frame-options: DENY
 	x-xss-protection: 1; mode=block
 ```
+
 **SDK Request the binary file from the response's location header.**
+
 ```
 REQUEST: https://data.eu.amaise.com/526602b4-0e96-4c90-bc28-ce720c9c6521/556a0908-0dcf-49f9-ab34-898d7f3a6212/export/b479a684-db08-4f34-8f11-5c28fdff157c.pdf?Expires=1663336111&Signature=xxx~kpRbLyFT8uIPQXsJf3jEu-W0xT8dtwf~6xN4Yt27GY4kxS-GljaumncWjrvKaekXUAsmCF-9meaSq4mjbBN4RvRyFe8UisoZfsl4N27h21I~PMdjCu2oMwnRUUZRGtwVWgrzptL34i-rcFFnQPf7FuN7CMN0Mz4RDpl4~-NpftOsUpVL50fvzMh5P948bdfGqewsZCWUBuaBNNRl3O2mgBjWhx9I9Jr4fke3Ze75NUElIKXRDvwTrBbXvpEiyOqBjJv1tXsXa5l5mdr775NWjM7oyCA5A94h6u1oCUtlf~kTjMyyDlLn6ARd2Ems-mK1Gt~uW73PF8lFMDAQ__&Key-Pair-Id=KQ99OHURCHWVL GET
 	:authority: data.eu.amaise.com
@@ -66,6 +70,7 @@ RESPONSE HEADERS:
 ## Flow for File Upload
 
 **SDK PUTs the binary to the presigned URL pointing to CloudFront, located at https://upload.amaise.com**
+
 ```
 REQUEST: https://upload.eu.amaise.com/526602b4-0e96-4c90-bc28-ce720c9c6521/5205b0f6-cc86-4cae-b2b2-76efbe27725e?Expires=1663335989&Signature=xxx~7XqfHC2Ebi1uLkiSN8NtO8fT~9g-OVH3DYV9nS6nQz-v~vNFetVWiO~b3zOnaWM1uds97UnsCwOZl-uboH13SpMeoRh~TWIC~mD6eW0KJAhZSNLulVUSledjei9RA4ZoMbSGJs-hPSq~weYBlXThG-8GvNtOlXFHsv2FH5M8M2NVn7LNr5Y3kVUUSRgNZRFadQzzetRcbk1iQtUffR-4ZSSRm2LnGLTMdCj-~Q~D7e1AeeqaPGC6W9bd4goUTi3AJ737MC3v2ZuAucCn-LKAh4tRP~YicyFmZOrmgOaBMyH9euRCHuDrJz4sGfsKYEwSZS2omzeBMtF9cXxHm3IA__&Key-Pair-Id=KQ99OHURCHWVL PUT
 	:authority: upload.eu.amaise.com

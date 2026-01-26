@@ -15,7 +15,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.14.0</version>
+    <version>1.15.0</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
 
@@ -161,10 +161,10 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!-- Markdown formatting handled by root-level Prettier (make format-markdown) -->
                     <formats>
                         <format>
                             <includes>
-                                <include>*.md</include>
                                 <include>.gitignore</include>
                             </includes>
                             <trimTrailingWhitespace />

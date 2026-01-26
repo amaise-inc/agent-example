@@ -15,11 +15,13 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 /** Note that the connector API is thread-safe. */
 @Component
+@Qualifier("ExampleAgentMetadataThread")
 public class ExampleAgentMetadataThread implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(ExampleAgentMetadataThread.class);
@@ -130,6 +132,10 @@ public class ExampleAgentMetadataThread implements Runnable {
 
             // if a property is set to an empty string, it is ignored and the default is used
             .putMetadata("legali.metadata.some-property", "")
+            // Optionally, pass the structured data for this document stored in your system (e.g.
+            // Sunet XML for Switzerland)
+            .structuredData(
+                "<?xml version=\"1.0 encoding=\"UTF-8\"?><claimReport>...</claimReport>")
             .build();
 
     log.info("🧾  Creating SourceFile");

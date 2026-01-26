@@ -6,4 +6,8 @@
         <cve>CVE-2025-58056</cve>
         <cve>CVE-2025-55163</cve>
     </suppress>
+    <suppress>
+        <notes>vertx-core-4.5.14.jar</notes>
+        <cve>CVE-2025-11965</cve>
+    </suppress>
 </suppressions>

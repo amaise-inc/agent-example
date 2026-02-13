@@ -42,28 +42,35 @@ jobs:
         run: |
           docker push $DOCKER_REPO:latest
       - name: Start & Validate Agent
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{env.DOCKER_REPO}}:latest
-          options: -e LEGALI_AUTH_URL=https://auth.dev.amaise.com -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
-          run: |
-            echo "# START AGENT"
-            env
-            nohup java -XX:MaxRAMPercentage=90.0 org.springframework.boot.loader.launch.JarLauncher > /tmp/tmp.log 2>&1 &
-            sleep 180
-            pkill -e java
-            echo "DONE - Looking for 'PingPong Event received' in log file..."
-            cat /tmp/tmp.log
-            if grep -q "PingPong Event received" "/tmp/tmp.log" ; then
-              echo "DONE - Looking for 'ExampleAgent run successful' in log file..."
-              if grep -q "ExampleAgent run successful" "/tmp/tmp.log" ; then
-                exit 0;
-              else
-                exit 1;
-              fi
+        run: |
+          cat > /tmp/validate.sh << 'SCRIPT'
+          echo "# START AGENT"
+          env
+          nohup java -XX:MaxRAMPercentage=90.0 org.springframework.boot.loader.launch.JarLauncher > /tmp/tmp.log 2>&1 &
+          sleep 180
+          pkill -e java
+          echo "DONE - Looking for 'PingPong Event received' in log file..."
+          cat /tmp/tmp.log
+          if grep -q "PingPong Event received" "/tmp/tmp.log" ; then
+            echo "DONE - Looking for 'ExampleAgent run successful' in log file..."
+            if grep -q "ExampleAgent run successful" "/tmp/tmp.log" ; then
+              exit 0;
             else
               exit 1;
             fi
+          else
+            exit 1;
+          fi
+          SCRIPT
+          docker run --rm \
+            --entrypoint sh \
+            -e LEGALI_AUTH_URL=https://auth.dev.amaise.com \
+            -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} \
+            -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 \
+            -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }} \
+            -v /tmp/validate.sh:/tmp/validate.sh \
+            $DOCKER_REPO:latest \
+            /tmp/validate.sh
       - name: Report Status
         if: always()
         uses: ravsamhq/notify-slack-action@v1
@@ -97,28 +104,35 @@ jobs:
         run: |
           docker push $DOCKER_REPO:latest
       - name: Start & Validate Agent
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{env.DOCKER_REPO}}:latest
-          options: -e LEGALI_AUTH_URL=https://auth.dev.amaise.com -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }}
-          run: |
-            echo "# START AGENT"
-            env
-            nohup /opt/jboss/container/java/run/run-java.sh > /tmp/tmp.log 2>&1 &
-            sleep 90
-            pkill -e java
-            echo "DONE - Looking for 'got pong event' in log file..."
-            cat /tmp/tmp.log
-            if grep -q "got pong event" "/tmp/tmp.log" ; then
-              echo "ExampleAgent run successful' in log file..."
-              if grep -q "ExampleAgent run successful" "/tmp/tmp.log" ; then
-                exit 0;
-              else
-                exit 1;
-              fi
+        run: |
+          cat > /tmp/validate.sh << 'SCRIPT'
+          echo "# START AGENT"
+          env
+          nohup /opt/jboss/container/java/run/run-java.sh > /tmp/tmp.log 2>&1 &
+          sleep 90
+          pkill -e java
+          echo "DONE - Looking for 'got pong event' in log file..."
+          cat /tmp/tmp.log
+          if grep -q "got pong event" "/tmp/tmp.log" ; then
+            echo "ExampleAgent run successful' in log file..."
+            if grep -q "ExampleAgent run successful" "/tmp/tmp.log" ; then
+              exit 0;
             else
               exit 1;
             fi
+          else
+            exit 1;
+          fi
+          SCRIPT
+          docker run --rm \
+            --entrypoint sh \
+            -e LEGALI_AUTH_URL=https://auth.dev.amaise.com \
+            -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} \
+            -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 \
+            -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }} \
+            -v /tmp/validate.sh:/tmp/validate.sh \
+            $DOCKER_REPO:latest \
+            /tmp/validate.sh
       - name: Report Status
         if: always()
         uses: ravsamhq/notify-slack-action@v1

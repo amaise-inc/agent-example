@@ -10,4 +10,8 @@
         <notes>vertx-core-4.5.14.jar</notes>
         <cve>CVE-2025-11965</cve>
     </suppress>
+    <suppress>
+        <notes>quarkus-core/quarkus-arc/arc: CVE is in quarkus-rest (not used)</notes>
+        <cve>CVE-2025-66560</cve>
+    </suppress>
 </suppressions>

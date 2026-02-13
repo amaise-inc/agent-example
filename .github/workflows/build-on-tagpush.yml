@@ -20,6 +20,8 @@ jobs:
       - name: Build with Maven
         working-directory: agent-example-spring
         run: make verify
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
   build-example-quarkus:
     runs-on: ubuntu-latest
@@ -35,6 +37,8 @@ jobs:
       - name: Build with Maven
         working-directory: agent-example-quarkus
         run: make verify
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
   create-release:
     needs:

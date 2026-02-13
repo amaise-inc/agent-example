@@ -8,7 +8,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-quarkus</artifactId>
-    <version>1.15.0</version>
+    <version>1.15.1-alpha</version>
     <name>Agent Example (Quarkus)</name>
     <description>amaise Agent Example (Quarkus)</description>
 
@@ -244,6 +244,7 @@
                 <version>${dependency-check.version}</version>
                 <configuration>
                     <dataDirectory>${user.home}/.depcheck-cache</dataDirectory>
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
                     <skipProvidedScope>true</skipProvidedScope>
                     <skipRuntimeScope>true</skipRuntimeScope>
                     <skipSystemScope>true</skipSystemScope>

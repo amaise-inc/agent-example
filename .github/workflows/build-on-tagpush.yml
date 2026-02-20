@@ -40,10 +40,29 @@ jobs:
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
+  build-example-nodejs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install, generate, and lint
+        working-directory: agent-example-nodejs
+        run: |
+          npm ci
+          wget -q -O openapi-agent.json "https://api.eu.amaise.com/doc/api-documentation/AGENT-SDK"
+          npm run generate
+          make lint
+
   create-release:
     needs:
       - build-example-spring
       - build-example-quarkus
+      - build-example-nodejs
     runs-on: ubuntu-latest
 
     steps:
@@ -58,7 +77,8 @@ jobs:
         run: |
           zip -r sdk-release.zip quickstart \
             agent-example-spring/{docker,Makefile,mvn*,pmd*,pom.xml,proj*,README.md,spot*,src} \
-            agent-example-quarkus/{Makefile,mvn*,pmd*,pom.xml,proj*,README.md,spot*,src}
+            agent-example-quarkus/{Makefile,mvn*,pmd*,pom.xml,proj*,README.md,spot*,src} \
+            agent-example-nodejs/{Dockerfile,Makefile,package.json,package-lock.json,openapi-ts.config.ts,tsconfig.json,README.md,lib,examples}
 
       - uses: ncipollo/release-action@v1
         with:

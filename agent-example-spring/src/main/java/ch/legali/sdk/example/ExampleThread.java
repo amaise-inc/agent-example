@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 
 /** Note that the connector API is thread-safe. */
 @Component
+@SuppressWarnings("deprecation")
 public class ExampleThread implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(ExampleThread.class);
@@ -106,7 +107,7 @@ public class ExampleThread implements Runnable {
    */
   private void runExample() {
     // Create
-    log.info("🗂  Adding LegalCase");
+    log.info("🗂  Creating LegalCase");
     AgentLegalCaseDTO legalCase =
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())
@@ -352,7 +353,7 @@ public class ExampleThread implements Runnable {
   }
 
   private void runExampleTwoDepartments() {
-    log.info("🗂  Adding LegalCase in Department 1");
+    log.info("🗂  Creating LegalCase in Department 1");
     AgentLegalCaseDTO legalCaseDept1 =
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())
@@ -369,7 +370,7 @@ public class ExampleThread implements Runnable {
     this.legalCaseService.create(
         legalCaseDept1, this.exampleConfig.getTenants().get("department-1"));
 
-    log.info("🗂  Adding LegalCase in Department 2");
+    log.info("🗂  Creating LegalCase in Department 2");
     AgentLegalCaseDTO legalCaseDept2 =
         AgentLegalCaseDTO.builder().from(legalCaseDept1).legalCaseId(UUID.randomUUID()).build();
     this.legalCaseService.create(

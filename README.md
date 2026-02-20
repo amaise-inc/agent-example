@@ -28,6 +28,11 @@
      - Add Prometheus data source pointing to http://prometheus:9090/
    - HTTP Proxy: `docker compose up squid` and adapt `agent.env` to use the proxy
 
+## Node.js (REST API) Example
+
+For integrations using direct REST API calls (without the Java SDK), see the `agent-example-nodejs/` directory.
+It demonstrates all core flows using plain HTTP requests from Node.js.
+
 ## Development
 
 See the READMEs in the framework-specific subdirectories for details.

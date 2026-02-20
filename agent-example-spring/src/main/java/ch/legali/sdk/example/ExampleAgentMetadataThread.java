@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 /** Note that the connector API is thread-safe. */
 @Component
 @Qualifier("ExampleAgentMetadataThread")
+@SuppressWarnings("deprecation")
 public class ExampleAgentMetadataThread implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(ExampleAgentMetadataThread.class);
@@ -76,7 +77,7 @@ public class ExampleAgentMetadataThread implements Runnable {
   private void runExample(
       String legalCaseFirstname, String legalCaseLastname, String filename, String mappingKey) {
     // Create
-    log.info("🗂  Adding LegalCase");
+    log.info("🗂  Creating LegalCase");
     AgentLegalCaseDTO legalCase =
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())

@@ -121,7 +121,7 @@ public class ExampleDashboardProcessingThread implements Runnable {
   public void run() {
     log.info("🚀 Starting ExampleDashboardProcessingThread");
 
-    log.info("🗂  Adding LegalCase");
+    log.info("🗂  Creating LegalCase");
     AgentLegalCaseDTO legalCase =
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())

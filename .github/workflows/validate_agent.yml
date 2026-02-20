@@ -80,6 +80,38 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
 
+  validate-sdk-agent-example-nodejs:
+    needs:
+      - validate-sdk-agent-example-quarkus # make sure they don't run parallel to not interfere with each other
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Fetch OpenAPI spec
+        working-directory: agent-example-nodejs
+        run: wget -q -O openapi-agent.json "https://api.dev.amaise.com/doc/api-documentation/AGENT-SDK"
+      - name: Build Docker image
+        working-directory: agent-example-nodejs
+        run: docker build --tag amaise-agent-example-nodejs .
+      - name: Validate Agent
+        run: |
+          docker run --rm \
+            -e LEGALI_AUTH_URL=https://auth.dev.amaise.com \
+            -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} \
+            -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 \
+            -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }} \
+            amaise-agent-example-nodejs 2>&1 | tee /tmp/validate.log
+          grep -q "Pong received" /tmp/validate.log
+          grep -q "Validation successful" /tmp/validate.log
+      - name: Report Status
+        if: always()
+        uses: ravsamhq/notify-slack-action@v1
+        with:
+          status: ${{ job.status }}
+          notify_when: 'failure'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
+
   validate-sdk-agent-example-quarkus:
     needs:
       - validate-sdk-agent-example-spring # make sure they don't run parallel to not interfere with each other

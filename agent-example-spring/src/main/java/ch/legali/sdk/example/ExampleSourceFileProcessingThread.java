@@ -108,7 +108,7 @@ public class ExampleSourceFileProcessingThread implements Runnable {
   public void run() {
     log.info("🚀 Starting ExampleSourceFileProcessingThread");
 
-    log.info("🗂  Adding LegalCase");
+    log.info("🗂  Creating LegalCase");
     AgentLegalCaseDTO legalCase =
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())

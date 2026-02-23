@@ -35,7 +35,9 @@ public class ExampleEventService {
 
   @PostConstruct
   void init() {
-    // NOTE: all events that the agent subscribes to, need to be handled by an event listener.
+    // NOTE: every subscribed event type must have a @ConsumeEvent handler that acknowledges it.
+    // Only subscribe to events your integration actually handles - subscribed but unacknowledged
+    // events accumulate in the queue and are re-delivered after 5 minutes.
     this.eventService.subscribe(
         PongEvent.class,
 

@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-DOCKER_TAG=legali-agent-example-quarkus
+DOCKER_TAG=amaise-agent-example-quarkus
 
 ifeq ($(OS),Windows_NT)
     maven_cmd := .\mvnw.cmd

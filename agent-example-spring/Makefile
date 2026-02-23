@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-DOCKER_TAG=legali-agent-example-spring
+DOCKER_TAG=amaise-agent-example-spring
 
 ifeq ($(OS),Windows_NT)
     maven_cmd := .\mvnw.cmd

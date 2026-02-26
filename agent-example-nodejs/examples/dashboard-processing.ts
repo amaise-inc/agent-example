@@ -59,8 +59,23 @@ async function onLegalCaseReady(e: LegalCaseReadyEvent): Promise<void> {
     }
     console.log();
   }
+  // Handle actions: dispatch each action to the corresponding operation in your core system.
+  // Action names and parameters are custom and defined together with amaise during the
+  // dashboard configuration process.
   for (const action of dashboard?.actions ?? []) {
-    console.log(`Action: ${action.name} (itemId: ${action.itemId})`);
+    switch (action.name) {
+      case 'send_confirmation_email':
+        console.log('[send_confirmation_email] params:', action.params);
+        break;
+      case 'send_rejection_email':
+        console.log('[send_rejection_email] params:', action.params);
+        break;
+      case 'notify_adjustor':
+        console.log('[notify_adjustor] params:', action.params);
+        break;
+      default:
+        console.warn(`Unknown action: ${action.name}`);
+    }
   }
 }
 

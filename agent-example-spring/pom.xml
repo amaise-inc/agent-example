@@ -15,7 +15,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.16.0</version>
+    <version>1.16.1-alpha</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
 

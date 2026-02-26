@@ -1,6 +1,6 @@
 {
   "name": "agent-example-nodejs",
-  "version": "1.16.0",
+  "version": "1.16.1",
   "private": true,
   "description": "Minimal amaise Agent REST API example in TypeScript",
   "license": "MIT",

@@ -94,16 +94,22 @@ public class ExampleDashboardProcessingThread implements Runnable {
                     .append(System.lineSeparator()));
     log.info("Question-Answer Pairs:%n%s", questionAnswerPairs.toString());
 
-    // Handle actions (e.g., send e-mails, create tasks, etc.)
+    // Handle actions: dispatch each action to the corresponding operation in your core system.
+    // Action names and parameters are custom and defined together with amaise during the
+    // dashboard configuration process.
     dashboard
         .actions()
         .forEach(
-            action ->
-                log.info(
-                    "Handling action: {} with params {} via item {}",
-                    action.name(),
-                    action.params(),
-                    action.itemId()));
+            action -> {
+              switch (action.name()) {
+                case "send_confirmation_email" ->
+                    log.info("[send_confirmation_email] params={}", action.params());
+                case "send_rejection_email" ->
+                    log.info("[send_rejection_email] params={}", action.params());
+                case "notify_adjustor" -> log.info("[notify_adjustor] params={}", action.params());
+                default -> log.warn("Unknown action: {}", action.name());
+              }
+            });
 
     /* IMPORTANT: Manage data lifecycle
      * The data lifecycle is fully managed by you, delete the legal case according to

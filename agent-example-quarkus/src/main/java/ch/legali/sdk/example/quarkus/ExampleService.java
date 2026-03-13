@@ -258,7 +258,19 @@ public class ExampleService {
     log.info("␡  Deleting SourceFile");
     this.sourceFileService.delete(sourceFile.sourceFileId());
 
+    // Archive the LegalCase: temporarily freezes it (hidden in UI, no user access) without
+    // deleting any data. Reversible at no extra cost — call legalCaseService.unarchive() to reopen
+    // (legalCaseService.create() with the same ID also works for backwards compatibility). Use
+    // archiving when the case may need to be reopened; use delete() only
+    // when the data is permanently no longer needed (irreversible, all data purged).
+    // See: https://docs.amaise.com/references/usecases/#legalcase---mandatory (LC3, LC6)
     log.info("🗄 Archiving LegalCase");
+    this.legalCaseService.archive(legalCaseResponse.legalCaseId());
+
+    // Demonstrate unarchive: reverses the archive — no data loss, case becomes visible again
+    this.legalCaseService.unarchive(legalCaseResponse.legalCaseId());
+    log.info("📂  LegalCase Unarchived: {}", legalCaseResponse.legalCaseId());
+
     this.legalCaseService.archive(legalCaseResponse.legalCaseId());
 
     list = this.sourceFileService.getByLegalCase(legalCase.legalCaseId());

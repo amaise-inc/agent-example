@@ -15,7 +15,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.16.1</version>
+    <version>1.17.0</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
 
@@ -34,7 +34,11 @@
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <spotbugs.maven.plugin.version>4.9.3.2</spotbugs.maven.plugin.version>
         <checkstyle.version>3.6.0</checkstyle.version>
-        <undertow.version>2.3.19.Final</undertow.version>
+        <!-- Override undertow to fix CVE-2025-12543 (undertow-core 2.3.21 and earlier vulnerable) -->
+        <undertow.version>2.3.23.Final</undertow.version>
+
+        <!-- Override log4j2 to fix CVE-2025-68161 (log4j-api 2.25.2 and earlier vulnerable) -->
+        <log4j2.version>2.25.3</log4j2.version>
     </properties>
 
 

@@ -89,7 +89,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Fetch OpenAPI spec
         working-directory: agent-example-nodejs
-        run: wget -q -O openapi-agent.json "https://api.dev.amaise.com/doc/api-documentation/AGENT-SDK"
+        run: wget -q -O openapi-agent.json "https://api.eu.amaise.com/doc/api-documentation/AGENT-SDK"
       - name: Build Docker image
         working-directory: agent-example-nodejs
         run: docker build --tag amaise-agent-example-nodejs .

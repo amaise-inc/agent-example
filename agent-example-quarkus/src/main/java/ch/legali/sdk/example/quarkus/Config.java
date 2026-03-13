@@ -66,6 +66,8 @@ public class Config {
     Optional<Integer> maxConnectionRetries();
 
     Map<String, UUID> tenants();
+
+    Optional<String> dashboardId();
   }
 
   @Produces
@@ -217,8 +219,8 @@ public class Config {
 
   @Produces
   @Singleton
-  public DashboardService dashboardService(DashboardClient legalCaseClient) {
-    return new DashboardService(legalCaseClient);
+  public DashboardService dashboardService(DashboardClient dashboardClient) {
+    return new DashboardService(dashboardClient);
   }
 
   @Produces

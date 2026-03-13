@@ -13,7 +13,7 @@ In the `ExampleService.java` and `ExampleEventService.java`, you see examples of
 - This has the following effects:
   - Upon receiving this event, the `ExampleService` creates legal cases and adds source files on the amaise workspace.
   - The `ExampleEventService` starts listening to events triggered on the API.
-    - As an example, he requests a `pong`-Event from the API.
+    - As an example, it requests a `pong`-Event from the API.
     - This pong will be sent by the API asynchronously and be visible in the EventHandler
 - All SDK entities and methods contain JavaDoc annotations.
 
@@ -30,7 +30,7 @@ http://localhost:8080/q/health/live
 # Readiness (agent can connect to the amaise cloud)
 http://localhost:8080/q/health/ready
 
-# Prometheus metrics; we recommend setting up alerts on the hearbeat_* counters.
+# Prometheus metrics; we recommend setting up alerts on the heartbeat_* counters.
 http://localhost:8080/q/metrics
 
 ```
@@ -42,6 +42,29 @@ http://localhost:8080/q/metrics
 
 &nbsp;
 &nbsp;
+
+## Dashboard Answering
+
+The `ExampleDashboardProcessingService` demonstrates how to retrieve and process dashboard answers when a case becomes ready. Set `legali.dashboard-id` in `application.properties` to enable it.
+
+Dashboard answers are polymorphic — each answer has a `type` discriminator:
+
+| Type           | Java Type                             | Key Fields                         |
+| -------------- | ------------------------------------- | ---------------------------------- |
+| `answer`       | `AgentDashboardAnswerDTO`             | `answer()`                         |
+| `trafficLight` | `AgentDashboardTrafficLightAnswerDTO` | `answer()`, `trafficLight()`       |
+| `list`         | `AgentDashboardListAnswerDTO`         | `answer()`, `headers()`, `items()` |
+
+### List answers
+
+List answers include column `headers()` and structured `items()`:
+
+- **`headers()`**: List of `AgentDashboardListHeaderDTO` with `key()` (matches item map keys), `label()` (locale map), and `type()` (data type).
+- **`items()`**: List of `Map<String, Object>` where each key corresponds to a header `key()`.
+
+### Actions
+
+Dashboards may include `actions()` — named operations with parameters (e.g. `send_rejection_email` with `from_email` / `to_email`). Dispatch them based on `action.name()` and read `action.params()`.
 
 ## References
 

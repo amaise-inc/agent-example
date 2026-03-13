@@ -2,7 +2,10 @@ package ch.legali.sdk.example;
 
 import ch.legali.api.events.LegalCaseReadyEvent;
 import ch.legali.sdk.example.config.ExampleConfig;
+import ch.legali.sdk.models.AgentDashboardAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardDTO;
+import ch.legali.sdk.models.AgentDashboardListAnswerDTO;
+import ch.legali.sdk.models.AgentDashboardTrafficLightAnswerDTO;
 import ch.legali.sdk.models.AgentLegalCaseDTO;
 import ch.legali.sdk.models.AgentSourceFileDTO;
 import ch.legali.sdk.services.DashboardService;
@@ -80,19 +83,43 @@ public class ExampleDashboardProcessingThread implements Runnable {
     log.info("Dashboard has {} answers", dashboard.answers().size());
     log.info("Dashboard can be accessed at {}", dashboard.url());
 
-    // Print question-answer pairs
+    // Print question-answer pairs — answers are polymorphic, check the type for richer data
     StringBuilder questionAnswerPairs = new StringBuilder();
     dashboard
         .answers()
         .forEach(
-            answer ->
+            answer -> {
+              questionAnswerPairs.append(answer.title()).append(System.lineSeparator());
+              if (answer instanceof AgentDashboardTrafficLightAnswerDTO trafficLight) {
                 questionAnswerPairs
-                    .append(answer.title())
-                    .append(System.lineSeparator())
-                    .append(answer.answer())
-                    .append(System.lineSeparator())
-                    .append(System.lineSeparator()));
-    log.info("Question-Answer Pairs:%n%s", questionAnswerPairs.toString());
+                    .append(trafficLight.answer())
+                    .append(" [")
+                    .append(trafficLight.trafficLight())
+                    .append("]");
+              } else if (answer instanceof AgentDashboardListAnswerDTO listAnswer) {
+                questionAnswerPairs.append("Headers: ");
+                listAnswer
+                    .headers()
+                    .forEach(
+                        header ->
+                            questionAnswerPairs
+                                .append(header.label())
+                                .append(" (key=")
+                                .append(header.key())
+                                .append(", type=")
+                                .append(header.type())
+                                .append(") "));
+                questionAnswerPairs.append("\n");
+                questionAnswerPairs.append("(").append(listAnswer.items().size()).append(" items)");
+                listAnswer.items().forEach(item -> questionAnswerPairs.append(item).append("\n"));
+              } else if (answer instanceof AgentDashboardAnswerDTO simpleAnswer) {
+                questionAnswerPairs.append(simpleAnswer.answer());
+              } else {
+                questionAnswerPairs.append(answer.answer());
+              }
+              questionAnswerPairs.append(System.lineSeparator()).append(System.lineSeparator());
+            });
+    log.info("Question-Answer Pairs:\n{}", questionAnswerPairs);
 
     // Handle actions: dispatch each action to the corresponding operation in your core system.
     // Action names and parameters are custom and defined together with amaise during the

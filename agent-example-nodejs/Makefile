@@ -9,9 +9,15 @@ install:
 
 OPENAPI_URL ?= https://api.eu.amaise.com/doc/api-documentation/AGENT-SDK
 
-## generate: fetch OpenAPI spec and generate TypeScript client
+## generate: fetch OpenAPI spec from live API and generate TypeScript client (customer workflow)
 generate:
-	wget -q -O openapi-agent.json "$(OPENAPI_URL)"
+	curl -fsSL -o openapi-agent.json $(OPENAPI_URL)
+	npm run generate
+
+## generate-local: generate from local monorepo spec (internal/CI workflow)
+generate-local:
+	@test -f ../../../core/shared/openapi/openapi-agent.json || (echo "Error: local spec not found. Run 'make generate-openapi-json' in core/case-processor first." && exit 1)
+	cp ../../../core/shared/openapi/openapi-agent.json openapi-agent.json
 	npm run generate
 
 ## test: run unit tests

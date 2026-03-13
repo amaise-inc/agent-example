@@ -13,7 +13,7 @@ In the `ExampleThread.java` and `ExampleEventService.java`, you see examples of 
 - This has the following effects:
   - Upon receiving this event, the `ExampleService` runs `ExampleThread` that creates legal cases and adds source files on the amaise workspace.
   - The `ExampleEventService` starts listening to events triggered on the API.
-    - As an example, he requests a `pong`-Event from the API.
+    - As an example, it requests a `pong`-Event from the API.
     - This pong will be sent by the API asynchronously and be visible in the EventHandler
 - All SDK entities and methods contain JavaDoc annotations.
 
@@ -30,7 +30,7 @@ http://localhost:8085/actuator/health/liveness
 # Readiness (agent can connect to the amaise cloud)
 http://localhost:8085/actuator/health/readiness
 
-# Prometheus metrics; we recommend setting up alerts on the hearbeat_* counters.
+# Prometheus metrics; we recommend setting up alerts on the heartbeat_* counters.
 http://localhost:8085/actuator/prometheus
 
 ```
@@ -42,6 +42,29 @@ http://localhost:8085/actuator/prometheus
 
 &nbsp;
 &nbsp;
+
+## Dashboard Answering
+
+The `ExampleDashboardProcessingThread` demonstrates how to retrieve and process dashboard answers after a case is ready. Enable it with `legali.example.enable-dashboard-processing-thread=true` and set `legali.example.dashboard-id`.
+
+Dashboard answers are polymorphic — each answer has a `type` discriminator:
+
+| Type           | Java Type                             | Key Fields                                        |
+| -------------- | ------------------------------------- | ------------------------------------------------- |
+| `answer`       | `AgentDashboardAnswerDTO`             | `answer()`                                        |
+| `trafficLight` | `AgentDashboardTrafficLightAnswerDTO` | `answer()`, `trafficLight()`                      |
+| `list`         | `AgentDashboardListAnswerDTO`         | `answer()`, `headers()` (field labels), `items()` |
+
+### List answers
+
+List answers include field labels via `headers()` and structured `items()`:
+
+- **`headers()`**: List of `AgentDashboardListHeaderDTO` field label definitions with `key()` (matches item map keys), `label()` (locale map), and `type()` (data type).
+- **`items()`**: List of `Map<String, Object>` where each key corresponds to a field label `key()`.
+
+### Actions
+
+Dashboards may include `actions()` — named operations with parameters (e.g. `send_rejection_email` with `from_email` / `to_email`). Dispatch them based on `action.name()` and read `action.params()`.
 
 ## References
 
@@ -59,6 +82,12 @@ spring.task.execution.pool.core-size=1
 # Run cleanup round to delete test legal cases
 legali.example.cleanup=true
 
+# Threads for processing examples
+# Enable examples thread that listens for ready sourcefiles and prints their metadata
+legali.example.enable-sourcefile-processing-thread=false
+# Enable examples thread that listens for ready legal cases, fetches their dashboards and prints their answers
+legali.example.enable-dashboard-processing-thread=false
+
 # Disable processing pipeline for development (do not use in production)
 legali.default-metadata.legali.pipeline.disabled=true
 legali.default-metadata.legali.uploader=example-agent
@@ -68,6 +97,13 @@ legali.auth-url=https://auth.eu.amaise.com
 legali.api-url=https://agents.eu.amaise.com/agents/v1
 legali.client-id=<>
 legali.client-secret=<>
+
+# Set departments and tenant ids
+legali.example.tenants.department-1=ef99fd60-e06e-4e2a-99b5-01bc37f710ae
+legali.example.tenants.department-2=526602b4-0e96-4c90-bc28-ce720c9c6521
+
+# Dashboard processing
+legali.example.dashboard-id=353d217b-987d-4880-95c4-57eea033075a
 
 # FileService: Use CLOUDFRONT to upload files directly to AWS.
 # If there are network restrictions, you can use LEGALI to proxy via amaise API. This is not recommended.

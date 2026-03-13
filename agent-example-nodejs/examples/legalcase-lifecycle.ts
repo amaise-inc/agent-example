@@ -18,12 +18,14 @@
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import type {
+  LegalCaseArchivedEvent,
   LegalCaseCreatedEvent,
-  LegalCaseUpdatedEvent,
   LegalCaseDeletedEvent,
   LegalCaseReadyEvent,
-  SourceFileReadyEvent,
+  LegalCaseUnarchivedEvent,
+  LegalCaseUpdatedEvent,
   SourceFileFailedEvent,
+  SourceFileReadyEvent,
 } from '../generated/types.gen';
 import { LegalCaseService, SourceFileService } from '../generated/sdk.gen';
 import { apiClient } from '../lib/api-client';
@@ -61,6 +63,20 @@ function onLegalCaseReady(e: LegalCaseReadyEvent): void {
   console.log(`🗂  LegalCase is ready: ${e.legalCaseUrl ?? legalCaseId}`);
 }
 
+/** Called when a LegalCase is archived (status → ARCHIVED). Schedule deletion after grace period. */
+function onLegalCaseArchived(e: LegalCaseArchivedEvent): void {
+  if (e.legalCaseId !== legalCaseId) return;
+  // ARCHIVED = case frozen. Not deleted — schedule deletion after 30–60 days grace period.
+  // See: https://docs.amaise.com/references/usecases/#legalcase---mandatory (LC3, LC6)
+  console.log(`🗄  LegalCase archived: ${e.legalCaseId}`);
+}
+
+/** Called when a LegalCase is unarchived (status → OPEN). Cancel any pending deletion. */
+function onLegalCaseUnarchived(e: LegalCaseUnarchivedEvent): void {
+  if (e.legalCaseId !== legalCaseId) return;
+  console.log(`📂  LegalCase unarchived: ${e.legalCaseId}`);
+}
+
 /** Called when a LegalCase is deleted. */
 function onLegalCaseDeleted(e: LegalCaseDeletedEvent): void {
   if (e.legalCase?.legalCaseId !== legalCaseId) return;
@@ -90,6 +106,8 @@ async function run(): Promise<void> {
   const eventSystem = new EventSystem({
     LegalCaseCreatedEvent: onLegalCaseCreated,
     LegalCaseUpdatedEvent: onLegalCaseUpdated,
+    LegalCaseArchivedEvent: onLegalCaseArchived,
+    LegalCaseUnarchivedEvent: onLegalCaseUnarchived,
     LegalCaseReadyEvent: onLegalCaseReady,
     LegalCaseDeletedEvent: onLegalCaseDeleted,
     SourceFileReadyEvent: onSourceFileReady,
@@ -182,6 +200,18 @@ async function run(): Promise<void> {
     console.log(
       `  Updated name: ${updated?.caseData?.PII_FIRSTNAME} ${updated?.caseData?.PII_LASTNAME}`,
     );
+
+    // Archive the LegalCase: temporarily freezes it (hidden in UI, no user access) without
+    // deleting any data. Idempotent — safe to call on an already-ARCHIVED case (returns 204).
+    console.log('\n🗄  Archiving LegalCase...');
+    await LegalCaseService.archiveLegalCase({ path: { legalCaseId } });
+    console.log('  LegalCase archived (status → ARCHIVED)');
+
+    // Unarchive: reverses the archive — no data loss, case becomes visible again.
+    // Prefer this over calling createLegalCase again to reopen a case.
+    console.log('\n📂  Unarchiving LegalCase...');
+    await LegalCaseService.unarchiveLegalCase({ path: { legalCaseId } });
+    console.log('  LegalCase unarchived (status → OPEN)');
 
     // List all LegalCases accessible to this agent (cross-tenant).
     console.log('\n📋 Listing all LegalCases...');

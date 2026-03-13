@@ -48,14 +48,38 @@ async function onLegalCaseReady(e: LegalCaseReadyEvent): Promise<void> {
   });
 
   console.log('\n--- Dashboard Results ---');
-  // Answers are polymorphic: "answer" (text) or "trafficLight" (text + color).
+  // Answers are polymorphic: "answer" (text), "trafficLight" (text + color), or "list" (items).
   for (const baseAnswer of dashboard?.answers ?? []) {
-    if (baseAnswer.type === 'trafficLight') {
-      console.log(`Q: ${baseAnswer.title}`);
-      console.log(`A: ${baseAnswer.answer ?? '(no answer)'} [${baseAnswer.trafficLight}]`);
-    } else {
-      console.log(`Q: ${baseAnswer.title}`);
-      console.log(`A: ${baseAnswer.answer ?? '(no answer)'}`);
+    console.log(`Q: ${baseAnswer.title}`);
+    switch (baseAnswer.type) {
+      case 'trafficLight': {
+        console.log(`  A: ${baseAnswer.answer ?? '(no answer)'} [${baseAnswer.trafficLight}]`);
+        break;
+      }
+      case 'list': {
+        // List answers contain field labels and structured items.
+        // The canonical API uses `headers` (AgentDashboardListHeaderDTO[]) and `items`;
+        // older generated types may still expose `rows` instead of `items`.
+        const listAnswer = baseAnswer as {
+          headers?: Array<{ key: string; label: Record<string, string>; type: string }>;
+          items?: Array<Record<string, unknown>>;
+          rows?: Array<Record<string, unknown>>;
+        };
+        if (listAnswer.headers) {
+          console.log(
+            `  Headers: ${listAnswer.headers.map((h) => `${h.key} (${h.type})`).join(', ')}`,
+          );
+        }
+        // Prefer `items` (canonical), fall back to `rows` (legacy generated types)
+        const items = listAnswer.items ?? listAnswer.rows ?? [];
+        console.log(`  A: (${items.length} items)`);
+        items.forEach((item, i) => console.log(`    [${i}]`, item));
+        break;
+      }
+      default: {
+        console.log(`  A: ${baseAnswer.answer ?? '(no answer)'}`);
+        break;
+      }
     }
     console.log();
   }

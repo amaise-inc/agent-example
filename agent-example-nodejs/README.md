@@ -26,10 +26,18 @@ cp .env.example .env
 
 ## Code Generation
 
-The TypeScript API client is auto-generated from the Agent API OpenAPI spec using [`@hey-api/openapi-ts`](https://heyapi.dev). Before first use, generate the client:
+The TypeScript API client is auto-generated from the Agent API OpenAPI spec using [`@hey-api/openapi-ts`](https://heyapi.dev).
+
+**Customer workflow** — fetch the spec from the live API and generate the client:
 
 ```bash
 make generate
+```
+
+**Internal workflow** — generate from the local monorepo spec (requires `make generate-openapi-json` in `core/case-processor` first):
+
+```bash
+make generate-local
 ```
 
 Re-run whenever the API changes. The `generated/` directory is git-ignored - each developer generates locally.
@@ -73,6 +81,27 @@ All configuration is done via environment variables (see `.env.example`):
 | `LEGALI_TENANTS_*`      | Tenant map: `LEGALI_TENANTS_<NAME>=<uuid>`. The first entry is used as the active tenant. Alternative to `TENANT_ID` for multi-tenant setups. E.g. `LEGALI_TENANTS_DEPARTMENT-1=<uuid>` |
 | `DASHBOARD_ID`          | Dashboard ID (required for dashboard example)                                                                                                                                           |
 | `HEARTBEAT_INTERVAL_MS` | Heartbeat poll interval override (default: 10 min)                                                                                                                                      |
+
+## Dashboard Answering
+
+Dashboard answers are polymorphic — each answer has a `type` discriminator:
+
+| Type           | Description                                 | Key Fields                      |
+| -------------- | ------------------------------------------- | ------------------------------- |
+| `answer`       | Plain text answer                           | `answer`                        |
+| `trafficLight` | Text with a traffic light color             | `answer`, `trafficLight` (enum) |
+| `list`         | Structured list with field labels and items | `answer`, `headers`, `items`    |
+
+### List answers
+
+List answers include field labels (`headers`) and structured `items`:
+
+- **`headers`**: Array of `{ key, label, type }` field label definitions. `key` matches the keys in each item map. `label` is a locale map (`{ "en": "Name", "de": "Name" }`). `type` is the data type (e.g. `text`, `date`).
+- **`items`**: Array of maps where each key corresponds to a field label `key`.
+
+### Actions
+
+Dashboards may include `actions` — named operations with parameters (e.g. `send_rejection_email` with `from_email` / `to_email`). See `dashboard-processing.ts` for a complete example.
 
 ## Project Structure
 

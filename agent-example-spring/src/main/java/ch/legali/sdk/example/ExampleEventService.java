@@ -61,7 +61,8 @@ public class ExampleEventService {
 
         // legalcase CRUD through frontend
         LegalCaseCreatedEvent.class,
-        LegalCaseStatusChangedEvent.class,
+        LegalCaseArchivedEvent.class,
+        LegalCaseUnarchivedEvent.class,
         LegalCaseUpdatedEvent.class,
         LegalCaseDeletedEvent.class,
         NotebookUpdatedEvent.class,
@@ -153,8 +154,18 @@ public class ExampleEventService {
   }
 
   @EventListener
-  public void handle(LegalCaseStatusChangedEvent event) {
-    log.info("LegalCaseStatusChangedEvent: \n{} {}", event.legalCaseId(), event.status());
+  public void handle(LegalCaseArchivedEvent event) {
+    // ARCHIVED = case frozen by the user in the UI. Not deleted — all data is preserved and the
+    // case can be instantly unarchived at no extra cost. In production, schedule deletion after a
+    // grace period (30–60 days recommended) to allow for reopening before permanently purging.
+    // See: https://docs.amaise.com/references/usecases/#legalcase---mandatory (LC3, LC6)
+    log.info("LegalCaseArchivedEvent: \n{}", event.legalCaseId());
+    this.eventService.acknowledge(event);
+  }
+
+  @EventListener
+  public void handle(LegalCaseUnarchivedEvent event) {
+    log.info("LegalCaseUnarchivedEvent: \n{}", event.legalCaseId());
     this.eventService.acknowledge(event);
   }
 

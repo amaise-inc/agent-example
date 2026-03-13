@@ -1,7 +1,10 @@
 package ch.legali.sdk.example.quarkus;
 
 import ch.legali.api.events.BaseEvent;
+import ch.legali.api.events.LegalCaseArchivedEvent;
 import ch.legali.api.events.LegalCaseCreatedEvent;
+import ch.legali.api.events.LegalCaseReadyEvent;
+import ch.legali.api.events.LegalCaseUnarchivedEvent;
 import ch.legali.api.events.PongEvent;
 import ch.legali.sdk.internal.HealthService;
 import ch.legali.sdk.services.EventService;
@@ -42,14 +45,15 @@ public class ExampleEventService {
         PongEvent.class,
 
         // legalcase CRUD through frontend
-        LegalCaseCreatedEvent.class
-        //                LegalCaseStatusChangedEvent.class,
+        LegalCaseCreatedEvent.class,
+        LegalCaseArchivedEvent.class,
+        LegalCaseUnarchivedEvent.class,
         //                LegalCaseUpdatedEvent.class,
         //                LegalCaseDeletedEvent.class,
         //                NotebookUpdatedEvent.class,
-        //
-        //                // all sourcefiles processed
-        //                LegalCaseReadyEvent.class,
+
+        // all sourcefiles processed
+        LegalCaseReadyEvent.class
         //
         //                // sourcefiles CRUD through frontend
         //                SourceFileCreatedEvent.class,
@@ -115,6 +119,28 @@ public class ExampleEventService {
         event.tenantId(),
         event.legalCase().caseData().get("PII_FIRSTNAME"),
         event.legalCase().caseData().get("PII_LASTNAME"));
+    this.eventService.acknowledge(event);
+  }
+
+  @ConsumeEvent(value = "LegalCaseReadyEvent")
+  void consume(LegalCaseReadyEvent event) {
+    log.info("LegalCaseReadyEvent: legalCaseId={}", event.legalCaseId());
+    this.eventService.acknowledge(event);
+  }
+
+  @ConsumeEvent(value = "LegalCaseArchivedEvent")
+  void consume(LegalCaseArchivedEvent event) {
+    // ARCHIVED = case frozen by the user in the UI. Not deleted — all data is preserved and the
+    // case can be instantly unarchived at no extra cost. In production, schedule deletion after a
+    // grace period (30–60 days recommended) to allow for reopening before permanently purging.
+    // See: https://docs.amaise.com/references/usecases/#legalcase---mandatory (LC3, LC6)
+    log.info("LegalCaseArchivedEvent: legalCaseId={}", event.legalCaseId());
+    this.eventService.acknowledge(event);
+  }
+
+  @ConsumeEvent(value = "LegalCaseUnarchivedEvent")
+  void consume(LegalCaseUnarchivedEvent event) {
+    log.info("LegalCaseUnarchivedEvent: legalCaseId={}", event.legalCaseId());
     this.eventService.acknowledge(event);
   }
 }

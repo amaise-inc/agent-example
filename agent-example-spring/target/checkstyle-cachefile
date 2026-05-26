@@ -1,0 +1,18 @@
+#Tue May 26 20:27:18 CEST 2026
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleAgentMetadataThread.java=1779174299405
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleApplication.java=1779174299405
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleBulkProcessingThread.java=1779174299405
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleDashboardProcessingThread.java=1779174299405
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleEventService.java=1779174299405
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleService.java=1779174299406
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleSourceFileProcessingThread.java=1779174299406
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleThread.java=1779174299406
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/SDKSetup.java=1779174299406
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/AgentHealthIndicator.java=1779174299406
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/ApiConfig.java=1779174299406
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/ExampleConfig.java=1779174299406
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/resources/application.properties=1779174299406
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/test/resources/application.properties=1779174299407
+configuration*?=C60A1274AB9F24F8925779F42084AA1F27EC0F25
+module-resource*?\:checkstyle-suppressions.xml=B9894776DA20A3D06A8FFCE9F7E355741443316E
+module-resource*?\:checkstyle-xpath-suppressions.xml=D0D2D8A0F5A77CC503CA5804309D852A809DBCA1

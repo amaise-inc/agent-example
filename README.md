@@ -42,7 +42,7 @@ See the READMEs in the framework-specific subdirectories for details.
 Make sure to set the secrets correctly via environment variables or a properties file:
 
 ```
-LEGALI_API_URL=https://{customer-prefix}.agents.amaise.com/agents/v1
+LEGALI_API_URL=https://{subdomain}.agents.{region}.amaise.com/agents/v1
 LEGALI_AUTH_URL=https://auth.{region}.amaise.com/
 LEGALI_CLIENT_ID=<from workspace>
 LEGALI_CLIENT_SECRET=<from workspace>
@@ -57,31 +57,45 @@ LEGALI_CLIENT_SECRET=<from workspace>
 
 ## Protocols and Firewall
 
-- The amaise SDK communicates via HTTPS/TLS1.4 to REST endpoints
-- Outbound access is required to
-  - the environment-specific agent endpoints, i.e., `https://{customer-prefix}.agents.amaise.com`
-    - For OpenAPI3 specs refer to `https://agents.{region}.amaise.com/doc/swagger.html`
-  - legal-i's data buckets on AWS the following URLs depending on your data region.
-    - Data Ingestion `https://upload.{region}.amaise.com/*`
-    - Data Region in DE `https://data.{region}.amaise.com/*` or
-    - Data Region in CH `https://data-ch.{region}.amaise.com/*` or
-    - Data Region in US `https://data-us.{region}.amaise.com/*`
-  - legal-i's IDP: `https://auth.{region}.amaise.com/oauth/token`
+- The amaise SDK communicates via HTTPS/TLS 1.3 to REST endpoints (port 443).
 - No inbound access is required.
+- Outbound access is required to the following endpoints:
 
-&nbsp;
+| Service            | Endpoint                                           | Method                    |
+| ------------------ | -------------------------------------------------- | ------------------------- |
+| Authentication     | `https://auth.{region}.amaise.com/oauth/token`     | POST                      |
+| Agent API          | `https://{subdomain}.agents.{region}.amaise.com/*` | GET/POST/PUT/PATCH/DELETE |
+| File Upload        | `https://upload.{region}.amaise.com/*`             | PUT                       |
+| File Download (DE) | `https://data.{region}.amaise.com/*`               | GET                       |
+| File Download (CH) | `https://data-ch.{region}.amaise.com/*`            | GET                       |
+| File Download (US) | `https://data-us.{region}.amaise.com/*`            | GET                       |
+
+Where `{region}` is `eu`, `us`, or `ch`, and `{subdomain}` is your subdomain (shown in Integration Settings).
+
+- For OpenAPI3 specs refer to `https://agents.{region}.amaise.com/doc/swagger-ui/index.html`
 
 ### File Transfer API
 
-The SDK transfers files directly from and to AWS using presigned URLs. Therefore, the following extra
-endpoints must be accessible outbound:
+The SDK transfers files directly from and to AWS CloudFront using presigned URLs. The file transfer endpoints must be
+allowed outbound on your firewall.
 
-```
-# The files are transferred to these endpoints:
-PUT https://upload.{region}.amaise.com/{any}
-GET https://data.{region}.amaise.com/{any} (DE)
-GET https://data-ch.{region}.amaise.com/{any} (CH)
-GET https://data-us.{region}.amaise.com/{any} (US)
+**Complete endpoint list per environment:**
+
+| Environment | Upload URL                      | Data URL (DE)                 | Data URL (CH)                    | Data URL (US)                    |
+| ----------- | ------------------------------- | ----------------------------- | -------------------------------- | -------------------------------- |
+| **EU**      | `https://upload.eu.amaise.com`  | `https://data.eu.amaise.com`  | `https://data-ch.eu.amaise.com`  | `https://data-us.eu.amaise.com`  |
+| **US**      | `https://upload.us.amaise.com`  | `https://data.us.amaise.com`  | `https://data-ch.us.amaise.com`  | `https://data-us.us.amaise.com`  |
+| **CH**      | `https://upload.ch.amaise.com`  | `https://data.ch.amaise.com`  | `https://data-ch.ch.amaise.com`  | `https://data-us.ch.amaise.com`  |
+| **Dev**     | `https://upload.dev.amaise.com` | `https://data.dev.amaise.com` | `https://data-ch.dev.amaise.com` | `https://data-us.dev.amaise.com` |
+
+Your workspace's data region determines which Data URL is used. The exact URLs are shown in the amaise workspace
+settings under **Integration > File Transfer**. You only need to allowlist the Upload URL and the Data URL(s) matching
+your workspace's data region(s).
+
+```bash
+# Example: EU environment, CH data region
+PUT https://upload.eu.amaise.com/{any}
+GET https://data-ch.eu.amaise.com/{any}
 ```
 
 ```
@@ -134,5 +148,10 @@ legali.pipeline.disabled = "true"
 
 ### Events
 
-The agent must subscribe to the events it wants to receive. Events are retained for 3 days.
+The agent must subscribe to the events it wants to receive.
 A list of all events can be found on swagger https://agents.eu.amaise.com/doc/swagger-ui/index.html
+
+**Delivery contract:** each event is delivered up to **5 times**. Unacked events are redelivered
+**5 minutes** after each heartbeat that returned them. After 5 unacknowledged deliveries the event
+is permanently deleted. Events also expire after a hard **3-day TTL** from publication. Always ack
+every event you receive — including ones your integration ignores.

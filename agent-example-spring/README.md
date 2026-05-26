@@ -54,6 +54,7 @@ Dashboard answers are polymorphic — each answer has a `type` discriminator:
 | `answer`       | `AgentDashboardAnswerDTO`             | `answer()`                                        |
 | `trafficLight` | `AgentDashboardTrafficLightAnswerDTO` | `answer()`, `trafficLight()`                      |
 | `list`         | `AgentDashboardListAnswerDTO`         | `answer()`, `headers()` (field labels), `items()` |
+| `json`         | `AgentDashboardJsonAnswerDTO`         | `answer()`, `data()`, `schemaVersion()`           |
 
 ### List answers
 
@@ -61,6 +62,13 @@ List answers include field labels via `headers()` and structured `items()`:
 
 - **`headers()`**: List of `AgentDashboardListHeaderDTO` field label definitions with `key()` (matches item map keys), `label()` (locale map), and `type()` (data type).
 - **`items()`**: List of `Map<String, Object>` where each key corresponds to a field label `key()`.
+
+### JSON answers
+
+JSON answers contain structured data extracted from case documents, matching the item's configured output schema:
+
+- **`data()`**: `Map<String, Object>` with the extracted fields.
+- **`schemaVersion()`**: Version tag of the schema that produced this answer.
 
 ### Actions
 
@@ -94,7 +102,7 @@ legali.default-metadata.legali.uploader=example-agent
 
 # Connection to the amaise Cloud
 legali.auth-url=https://auth.eu.amaise.com
-legali.api-url=https://agents.eu.amaise.com/agents/v1
+legali.api-url=https://{subdomain}.agents.eu.amaise.com/agents/v1
 legali.client-id=<>
 legali.client-secret=<>
 

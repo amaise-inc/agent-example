@@ -1,43 +1,16 @@
-#Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-release.properties
-.flattened-pom.xml
-
-# Eclipse
-.project
-.classpath
-.settings/
-bin/
-
-# IntelliJ
-.idea
-*.ipr
-*.iml
-*.iws
-
-# NetBeans
-nb-configuration.xml
-
-# Visual Studio Code
-.vscode
-.factorypath
-
-# OSX
-.DS_Store
-
-# Vim
-*.swp
-*.swo
-
-# patch
-*.orig
-*.rej
-
-# Local environment
-.env
-
-# Plugin directory
+# IntelliJ IDEA — whitelist shared project config only
+!/.idea/
+/.idea/*
+!/.idea/.gitignore
+!/.idea/compiler.xml
+!/.idea/encodings.xml
+!/.idea/google-java-format.xml
+!/.idea/jarRepositories.xml
+!/.idea/misc.xml
+!/.idea/vcs.xml
+# Quarkus
 /.quarkus/cli/plugins/
+.flattened-pom.xml
+release.properties
+# local environment
+.env

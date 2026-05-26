@@ -117,24 +117,16 @@ async function run(): Promise<void> {
         legalCaseId,
 
         // -- caseData (required) -------------------------------------------
-        // PII (Personally Identifiable Information), job details, and incident data about the claimant. Powers data
-        // extraction and is displayed in the amaise UI.
-        // REQUIRED: either (PII_FIRSTNAME + PII_LASTNAME) or PII_COMPANY.
-        // All other keys are optional but improve extraction quality.
-        // We recommend providing all PII_* fields; JOB_* and INCIDENT_* are
-        // usually covered by structuredData (e.g. SUNET XML) on the SourceFile.
+        // PII about the person/entity the case is about. See legalcase-lifecycle.ts
+        // for the full reference and documented formats.
+        // REQUIRED: (PII_FIRSTNAME + PII_LASTNAME) or PII_COMPANY.
+        // Incident, employment and claim data belong on SourceFile structuredData
+        // (e.g. SUNET XML on CH).
         caseData: {
           PII_FIRSTNAME: 'Jane',
           PII_LASTNAME: 'Doe',
           // Or use PII_COMPANY instead of name fields:
           // PII_COMPANY: 'Acme Corp',
-          //
-          // Additional optional categories:
-          //   PII_*       - personal info (birthdate, address, AHV number, etc.)
-          //   JOB_*       - employment details (employer, role, income, etc.)
-          //   INCIDENT_*  - claim/incident details (date, ICD-10 code, etc.)
-          //   CUSTOM_1-3  - free-form integration-specific fields
-          // See AgentLegalCaseDTO in the Swagger docs for the full list.
         },
 
         // -- reference (required) ------------------------------------------

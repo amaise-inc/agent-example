@@ -1,5 +1,5 @@
 # Stage 1: Build & type-check
-FROM node:22-slim AS builder
+FROM node:24-slim AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -17,7 +17,7 @@ RUN npm run typecheck
 RUN npm test
 
 # Stage 2: Runtime (production deps only)
-FROM node:22-slim
+FROM node:24-slim
 RUN groupadd -r amaise && useradd --no-log-init -r -g amaise amaise
 WORKDIR /app
 COPY --from=builder /app/package.json /app/package-lock.json ./

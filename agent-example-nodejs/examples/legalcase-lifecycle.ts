@@ -124,24 +124,38 @@ async function run(): Promise<void> {
         legalCaseId,
 
         // -- caseData (required) -------------------------------------------
-        // PII (Personally Identifiable Information), job details, and incident data about the claimant. Powers data
-        // extraction and is displayed in the amaise UI.
+        // PII about the person or entity the case is about. Powers extraction
+        // and is displayed in the amaise UI.
+        //
         // REQUIRED: either (PII_FIRSTNAME + PII_LASTNAME) or PII_COMPANY.
-        // All other keys are optional but improve extraction quality.
-        // We recommend providing all PII_* fields; JOB_* and INCIDENT_* are
-        // usually covered by structuredData (e.g. SUNET XML) on the SourceFile.
+        // All other PII_* keys are optional — send what you have.
+        //
+        // Documented formats (mismatches are logged as warnings, not rejected):
+        //   PII_BIRTHDATE     — YYYY-MM-DD (ISO 8601)
+        //   PII_AHV_NR        — 756.XXXX.XXXX.XX (Swiss social-security number)
+        //   PII_NATIONALITY   — recommended: ISO 3166-1 alpha-2 (e.g. CH, DE)
+        //   PII_PLZ           — 4-digit Swiss postal code
+        //   PII_GENDER        — MALE | FEMALE | OTHER
+        //
+        // CUSTOM_1/2/3 are opaque integration-specific tags (e.g. correlation IDs).
+        //
+        // Incident, employment and claim data belong on SourceFile structuredData
+        // (e.g. SUNET XML on CH).
         caseData: {
           PII_FIRSTNAME: 'Max',
           PII_LASTNAME: 'Muster',
-          // Or use PII_COMPANY instead of name fields:
+          PII_GENDER: 'MALE',
+          PII_BIRTHDATE: '1985-03-22',
+          PII_AHV_NR: '756.1234.5678.90',
+          PII_NATIONALITY: 'CH',
+          PII_ADDRESS: 'Bahnhofstrasse 1',
+          PII_CITY: 'Zürich',
+          PII_PLZ: '8001',
+          PII_PHONE_NO: '+41 44 123 45 67',
+          PII_EMAIL: 'max.muster@example.com',
+          CUSTOM_1: `crm-ref-${legalCaseId.slice(0, 8)}`,
+          // Use PII_COMPANY instead of name fields when the case is about a company:
           // PII_COMPANY: 'Acme Corp',
-          //
-          // Additional optional categories:
-          //   PII_*       - personal info (birthdate, address, AHV number, etc.)
-          //   JOB_*       - employment details (employer, role, income, etc.)
-          //   INCIDENT_*  - claim/incident details (date, ICD-10 code, etc.)
-          //   CUSTOM_1-3  - free-form integration-specific fields
-          // See AgentLegalCaseDTO in the Swagger docs for the full list.
         },
 
         // -- reference (required) ------------------------------------------
@@ -201,14 +215,11 @@ async function run(): Promise<void> {
       `  Updated name: ${updated?.caseData?.PII_FIRSTNAME} ${updated?.caseData?.PII_LASTNAME}`,
     );
 
-    // Archive the LegalCase: temporarily freezes it (hidden in UI, no user access) without
-    // deleting any data. Idempotent — safe to call on an already-ARCHIVED case (returns 204).
+    // Archive freezes the case (no data lost, no extra cost). Reverse with unarchiveLegalCase().
     console.log('\n🗄  Archiving LegalCase...');
     await LegalCaseService.archiveLegalCase({ path: { legalCaseId } });
     console.log('  LegalCase archived (status → ARCHIVED)');
 
-    // Unarchive: reverses the archive — no data loss, case becomes visible again.
-    // Prefer this over calling createLegalCase again to reopen a case.
     console.log('\n📂  Unarchiving LegalCase...');
     await LegalCaseService.unarchiveLegalCase({ path: { legalCaseId } });
     console.log('  LegalCase unarchived (status → OPEN)');

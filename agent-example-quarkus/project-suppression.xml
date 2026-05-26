@@ -1,3 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- netty CVEs — transitive via Quarkus/Vert.x, awaiting Quarkus BOM update -->
+    <suppress>
+        <notes><![CDATA[CVE-2026-33871: netty 4.1.130 via Quarkus 3.34.6]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-.*@.*$</packageUrl>
+        <cve>CVE-2026-33871</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[CVE-2026-33870: netty 4.1.130 via Quarkus 3.34.6]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-.*@.*$</packageUrl>
+        <cve>CVE-2026-33870</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[CVE-2026-42582: netty 4.1.133 via Quarkus 3.35.x — awaiting Quarkus BOM update with Netty 4.2.x]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-.*@.*$</packageUrl>
+        <cve>CVE-2026-42582</cve>
+    </suppress>
+    <!--
+        CVE-2026-42154 (CVSS 7.5) is a Snappy-bomb DoS in the Prometheus *server's*
+        /api/v1/read endpoint (the Go binary). OWASP dep-check matches it against the
+        Java io.prometheus:simpleclient library by CPE name collision
+        (cpe:2.3:a:prometheus:prometheus:0.16.0) — but the Java client lib has no
+        /api/v1/read endpoint and is wholly unaffected. simpleclient 0.16.0 is pulled
+        in transitively by quarkus-micrometer-registry-prometheus.
+    -->
+    <suppress>
+        <notes><![CDATA[
+        CVE-2026-42154 affects the Prometheus server (Go); not applicable to
+        io.prometheus:simpleclient (Java). False-positive CPE match.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.prometheus/simpleclient.*@.*$</packageUrl>
+        <cve>CVE-2026-42154</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[CVE-2026-42154 affects the Prometheus server (Go); not the Java micrometer-registry-prometheus(-simpleclient) lib. False-positive CPE match.]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.micrometer/micrometer-registry-prometheus.*@.*$</packageUrl>
+        <cve>CVE-2026-42154</cve>
+    </suppress>
+    <!--
+        io.prometheus:simpleclient_tracer_otel_agent 0.16.0 is incorrectly matched
+        against cpe:2.3:a:opentelemetry:opentelemetry:0.16.0 due to the shared
+        version string. The Prometheus simpleclient OTel-agent shim is unrelated
+        to the OpenTelemetry project's Collector/SDKs that the CVEs target.
+    -->
+    <suppress>
+        <notes><![CDATA[
+        False-positive CPE collision: io.prometheus:simpleclient_tracer_otel_agent
+        is not the OpenTelemetry project. Suppressing the bogus opentelemetry CPE
+        match for this package.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.prometheus/simpleclient_tracer_otel_agent@.*$</packageUrl>
+        <cpe>cpe:/a:opentelemetry:opentelemetry</cpe>
+    </suppress>
 </suppressions>

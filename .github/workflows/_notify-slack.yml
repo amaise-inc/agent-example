@@ -1,0 +1,39 @@
+name: "Notify: Slack"
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+        description: "Workflow context (ci/release/validate)"
+      status:
+        type: string
+        required: true
+        description: "Pipeline status (success/failure)"
+    secrets:
+      SLACK_WEBHOOK_CI:
+        required: true
+
+permissions: {}
+
+jobs:
+  notify:
+    name: "Notify Slack"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      EMOJI: ${{ inputs.status == 'success' && ':large_green_circle:' || ':red_circle:' }}
+    steps:
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v3.0.3
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_CI }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "${{ env.EMOJI }} *${{ github.workflow }}* ${{ inputs.status }} (${{ inputs.environment }}) — <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "${{ env.EMOJI }} *${{ github.workflow }}* ${{ inputs.status }}\n*Repository:* `${{ github.repository }}`\n*Branch:* `${{ github.ref_name }}`\n*Commit:* `${{ github.sha }}`\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"

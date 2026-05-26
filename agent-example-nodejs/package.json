@@ -1,6 +1,6 @@
 {
   "name": "agent-example-nodejs",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "private": true,
   "description": "Minimal amaise Agent REST API example in TypeScript",
   "license": "MIT",
@@ -24,14 +24,14 @@
     "tsx": "^4.0.0"
   },
   "devDependencies": {
-    "@hey-api/openapi-ts": "0.92.3",
-    "@types/node": "^22.0.0",
+    "@hey-api/openapi-ts": "0.97.1",
+    "@types/node": "^24.12.4",
     "@types/simple-oauth2": "^5.0.0",
-    "prettier": "^3.0.0",
+    "prettier": "^3.8.3",
     "typescript": "^5.7.0",
-    "vitest": "^4.0.18"
+    "vitest": "~4.1.6"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   }
 }

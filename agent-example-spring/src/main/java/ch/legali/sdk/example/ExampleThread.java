@@ -112,12 +112,27 @@ public class ExampleThread implements Runnable {
         AgentLegalCaseDTO.builder()
             .legalCaseId(UUID.randomUUID())
             .caseData(
-                // IMPORTANT: every case must have a PII_FIRSTNAME and PII_LASTNAME, or PII_COMPANY
-                // set.
-                // Generally speaking, if the case belongs to a person, PII_FIRSTNAME and
-                // PII_LASTNAME should be set. If the case belongs to a company or any other case,
-                // PII_COMPANY should be set.
-                Map.ofEntries(Map.entry("PII_FIRSTNAME", "John"), Map.entry("PII_LASTNAME", "Doe")))
+                // caseData should ONLY contain PII about the person/entity the case is about.
+                // Required: either PII_FIRSTNAME + PII_LASTNAME, or PII_COMPANY.
+                // Send any additional PII_* keys you have — see the integration guide for the
+                // full reference and the documented format for each (dates as YYYY-MM-DD,
+                // AHV as 756.XXXX.XXXX.XX, nationality as ISO 3166-1 alpha-2, etc.).
+                // CUSTOM_1/2/3 are opaque integration-specific tags (e.g. correlation IDs).
+                // Do NOT send JOB_* or INCIDENT_* — they are deprecated. Incident, employment
+                // and claim data belong on the SourceFile structuredData field (e.g. Sunet XML).
+                Map.ofEntries(
+                    Map.entry("PII_FIRSTNAME", "John"),
+                    Map.entry("PII_LASTNAME", "Doe"),
+                    Map.entry("PII_GENDER", "MALE"),
+                    Map.entry("PII_BIRTHDATE", "1990-05-15"),
+                    Map.entry("PII_AHV_NR", "756.1234.5678.90"),
+                    Map.entry("PII_NATIONALITY", "CH"),
+                    Map.entry("PII_ADDRESS", "Bundesplatz 1"),
+                    Map.entry("PII_CITY", "Bern"),
+                    Map.entry("PII_PLZ", "3011"),
+                    Map.entry("PII_PHONE_NO", "+41 123 456 789"),
+                    Map.entry("PII_EMAIL", "john.doe@example.com"),
+                    Map.entry("CUSTOM_1", "crm-ref-12345")))
             .reference("123-456-789")
             // Pass the UserID from SSO
             .owner("DummyIamUser")
@@ -334,16 +349,10 @@ public class ExampleThread implements Runnable {
     log.info("␡  Deleting SourceFile");
     this.sourceFileService.delete(sourceFile.sourceFileId());
 
-    // Archive the LegalCase: temporarily freezes it (hidden in UI, no user access) without
-    // deleting any data. Reversible at no extra cost — call legalCaseService.unarchive() to reopen
-    // (legalCaseService.create() with the same ID also works for backwards compatibility). Use
-    // archiving when the case may need to be reopened; use delete() only
-    // when the data is permanently no longer needed (irreversible, all data purged).
-    // See: https://docs.amaise.com/references/usecases/#legalcase---mandatory (LC3, LC6)
+    // Archive freezes the case (no data lost, no extra cost). Reverse with unarchive().
     log.info("🗄  Archiving LegalCase");
     this.legalCaseService.archive(legalCaseResponse.legalCaseId());
 
-    // Demonstrate unarchive: reverses the archive — no data loss, case becomes visible again
     this.legalCaseService.unarchive(legalCaseResponse.legalCaseId());
     log.info("📂  LegalCase Unarchived: {}", legalCaseResponse.legalCaseId());
 

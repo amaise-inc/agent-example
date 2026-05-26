@@ -76,6 +76,16 @@ async function onLegalCaseReady(e: LegalCaseReadyEvent): Promise<void> {
         items.forEach((item, i) => console.log(`    [${i}]`, item));
         break;
       }
+      case 'json': {
+        // JSON answers contain structured data matching the item's output schema.
+        console.log(`  Schema: v${baseAnswer.schemaVersion ?? '(unknown)'}`);
+        if (baseAnswer.data) {
+          Object.entries(baseAnswer.data).forEach(([key, value]) => {
+            console.log(`    ${key}: ${JSON.stringify(value)}`);
+          });
+        }
+        break;
+      }
       default: {
         console.log(`  A: ${baseAnswer.answer ?? '(no answer)'}`);
         break;
@@ -132,24 +142,15 @@ async function run(): Promise<void> {
         legalCaseId,
 
         // -- caseData (required) -------------------------------------------
-        // PII (Personally Identifiable Information), job details, and incident data about the claimant. Powers data
-        // extraction and is displayed in the amaise UI.
-        // REQUIRED: either (PII_FIRSTNAME + PII_LASTNAME) or PII_COMPANY.
-        // All other keys are optional but improve extraction quality.
-        // We recommend providing all PII_* fields; JOB_* and INCIDENT_* are
-        // usually covered by structuredData (e.g. SUNET XML) on the SourceFile.
+        // PII about the person/entity the case is about. See legalcase-lifecycle.ts
+        // for the full reference and documented formats.
+        // REQUIRED: (PII_FIRSTNAME + PII_LASTNAME) or PII_COMPANY.
+        // Do NOT send JOB_* / INCIDENT_* — deprecated, send via SourceFile structuredData.
         caseData: {
           PII_FIRSTNAME: 'Max',
           PII_LASTNAME: 'Muster',
           // Or use PII_COMPANY instead of name fields:
           // PII_COMPANY: 'Acme Corp',
-          //
-          // Additional optional categories:
-          //   PII_*       - personal info (birthdate, address, AHV number, etc.)
-          //   JOB_*       - employment details (employer, role, income, etc.)
-          //   INCIDENT_*  - claim/incident details (date, ICD-10 code, etc.)
-          //   CUSTOM_1-3  - free-form integration-specific fields
-          // See AgentLegalCaseDTO in the Swagger docs for the full list.
         },
 
         // -- reference (required) ------------------------------------------

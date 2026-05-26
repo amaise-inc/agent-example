@@ -63,7 +63,9 @@ export class EventSystem {
 
       // Normalize "c": the API uses Jackson MINIMAL_CLASS format (e.g. ".PongEvent") - strip the
       // leading dot so handler registry lookups match the OpenAPI spec names.
-      const normalized = events.map((e) => ({ ...e, c: e.c.replace(/^\./, '') }) as AppEvent);
+      const normalized = events.map(
+        (e: AppEvent) => ({ ...e, c: e.c.replace(/^\./, '') }) as AppEvent,
+      );
 
       // Dispatch handlers sequentially, then ack all in parallel.
       for (const event of normalized) {
@@ -84,9 +86,9 @@ export class EventSystem {
 
       // Ack all events in parallel - even if a handler threw, every event must be
       // acknowledged to prevent re-delivery on the next heartbeat.
-      const ackable = normalized.filter((e) => e.id);
+      const ackable = normalized.filter((e: AppEvent) => e.id);
       const results = await Promise.allSettled(
-        ackable.map((e) => EventsService.acknowledgeEvent({ body: { eventId: e.id! } })),
+        ackable.map((e: AppEvent) => EventsService.acknowledgeEvent({ body: { eventId: e.id! } })),
       );
       for (const [i, result] of results.entries()) {
         if (result.status === 'rejected') {

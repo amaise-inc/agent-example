@@ -17,8 +17,9 @@ help:
 clean:
 	${maven_cmd} clean
 
-## install: mvn install
+## install: mvn install (pre-downloads dependencies for cache efficiency)
 install:
+	@${maven_cmd} -B dependency:go-offline
 	${maven_cmd} install -DskipTests
 
 ## build: build the agent
@@ -34,10 +35,10 @@ format:
 lint:
 	${maven_cmd} -B spotless:check
 	${maven_cmd} -B spotbugs:check
+	${maven_cmd} -B pmd:check
 	${maven_cmd} -B checkstyle:check
-	${maven_cmd} -B org.owasp:dependency-check-maven:check
 	${maven_cmd} -B license:add-third-party
-	! cat target/generated-sources/license/THIRD-PARTY.txt | egrep "AGPL|GPL3|SSPL"
+	! cat target/generated-sources/license/THIRD-PARTY.txt | grep -E "AGPL|GPL3|SSPL"
 
 ## test: run unit tests
 test:
@@ -66,7 +67,7 @@ dep-check:
 
 ## dockerize: create agent docker image
 dockerize:
-	@docker build -f src/main/docker/Dockerfile.jvm -t "$(DOCKER_TAG)" .
+	@docker buildx build --load -f src/main/docker/Dockerfile.jvm -t "$(DOCKER_TAG)" .
 
 ## run: run docker image
 run: dockerize

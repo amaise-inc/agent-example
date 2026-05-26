@@ -1,0 +1,127 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-example-spring:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+          cache-dependency-path: agent-example-spring/pom.xml
+      - name: Cache NVD database
+        uses: actions/cache@v5
+        with:
+          path: ~/.depcheck-cache
+          key: depcheck-nvd-runner-v1
+          restore-keys: depcheck-nvd-runner-
+
+      - name: Build with Maven
+        working-directory: agent-example-spring
+        run: make verify
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+  build-example-quarkus:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+          cache-dependency-path: agent-example-quarkus/pom.xml
+      - name: Cache NVD database
+        uses: actions/cache@v5
+        with:
+          path: ~/.depcheck-cache
+          key: depcheck-nvd-runner-v1
+          restore-keys: depcheck-nvd-runner-
+
+      - name: Build with Maven
+        working-directory: agent-example-quarkus
+        run: make verify
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+  build-example-nodejs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: agent-example-nodejs/package-lock.json
+
+      - name: Install, generate, verify, and dep-check
+        working-directory: agent-example-nodejs
+        run: |
+          npm ci
+          wget -q -O openapi-agent.json "https://api.eu.amaise.com/doc/api-documentation/AGENT-SDK"
+          npm run generate
+          make verify
+          make dep-check
+
+  create-release:
+    needs:
+      - build-example-spring
+      - build-example-quarkus
+      - build-example-nodejs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v6
+
+      - name: Get the tag version
+        id: get_version
+        run: echo "VERSION=$(echo "$GITHUB_REF" | cut -d / -f 3)" >> "$GITHUB_OUTPUT"
+
+      - name: Build Release
+        run: |
+          zip -r sdk-release.zip quickstart \
+            agent-example-spring/{docker,Makefile,mvn*,pmd*,pom.xml,proj*,README.md,spot*,src} \
+            agent-example-quarkus/{Makefile,mvn*,pmd*,pom.xml,proj*,README.md,spot*,src} \
+            agent-example-nodejs/{.prettierrc,Dockerfile,Makefile,package.json,package-lock.json,openapi-ts.config.ts,tsconfig.json,vitest.config.ts,README.md,lib,examples,ci,assets}
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: 'sdk-release.zip'
+          tag: ${{ steps.get_version.outputs.VERSION }}
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          draft: true
+          bodyFile: release_template.md
+          allowUpdates: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  notify-failure:
+    name: "Notify Failure"
+    needs: [build-example-spring, build-example-quarkus, build-example-nodejs, create-release]
+    if: >-
+      always()
+      && (needs.build-example-spring.result == 'failure'
+      || needs.build-example-quarkus.result == 'failure'
+      || needs.build-example-nodejs.result == 'failure'
+      || needs.create-release.result == 'failure')
+    uses: ./.github/workflows/_notify-slack.yml
+    with:
+      environment: release
+      status: failure
+    secrets:
+      SLACK_WEBHOOK_CI: ${{ secrets.SLACK_WEBHOOK_CI }}

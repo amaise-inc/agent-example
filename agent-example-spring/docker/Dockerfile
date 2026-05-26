@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ### BUILD image
 FROM eclipse-temurin:21-jammy AS builder
 

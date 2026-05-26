@@ -44,6 +44,14 @@ run-sourcefile-processing:
 run-dashboard-processing:
 	npm run dashboard-processing
 
+## dep-check: audit production dependencies for vulnerabilities
+dep-check:
+	npm audit --omit=dev
+
+## verify: run linters and tests
+verify:
+	npm run verify
+
 ## dockerize: build Docker image
 dockerize:
 	docker build --tag amaise-agent-example-nodejs .

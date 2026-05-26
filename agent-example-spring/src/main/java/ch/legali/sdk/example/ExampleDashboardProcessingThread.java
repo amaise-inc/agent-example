@@ -4,6 +4,7 @@ import ch.legali.api.events.LegalCaseReadyEvent;
 import ch.legali.sdk.example.config.ExampleConfig;
 import ch.legali.sdk.models.AgentDashboardAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardDTO;
+import ch.legali.sdk.models.AgentDashboardJsonAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardListAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardTrafficLightAnswerDTO;
 import ch.legali.sdk.models.AgentLegalCaseDTO;
@@ -112,6 +113,22 @@ public class ExampleDashboardProcessingThread implements Runnable {
                 questionAnswerPairs.append("\n");
                 questionAnswerPairs.append("(").append(listAnswer.items().size()).append(" items)");
                 listAnswer.items().forEach(item -> questionAnswerPairs.append(item).append("\n"));
+              } else if (answer instanceof AgentDashboardJsonAnswerDTO jsonAnswer) {
+                // JSON answers contain structured data matching the item's output schema
+                questionAnswerPairs
+                    .append("Schema: v")
+                    .append(jsonAnswer.schemaVersion())
+                    .append("\n");
+                jsonAnswer
+                    .data()
+                    .forEach(
+                        (key, value) ->
+                            questionAnswerPairs
+                                .append("  ")
+                                .append(key)
+                                .append(": ")
+                                .append(value)
+                                .append("\n"));
               } else if (answer instanceof AgentDashboardAnswerDTO simpleAnswer) {
                 questionAnswerPairs.append(simpleAnswer.answer());
               } else {

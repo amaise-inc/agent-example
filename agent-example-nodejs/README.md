@@ -86,11 +86,12 @@ All configuration is done via environment variables (see `.env.example`):
 
 Dashboard answers are polymorphic — each answer has a `type` discriminator:
 
-| Type           | Description                                 | Key Fields                      |
-| -------------- | ------------------------------------------- | ------------------------------- |
-| `answer`       | Plain text answer                           | `answer`                        |
-| `trafficLight` | Text with a traffic light color             | `answer`, `trafficLight` (enum) |
-| `list`         | Structured list with field labels and items | `answer`, `headers`, `items`    |
+| Type           | Description                                 | Key Fields                        |
+| -------------- | ------------------------------------------- | --------------------------------- |
+| `answer`       | Plain text answer                           | `answer`                          |
+| `trafficLight` | Text with a traffic light color             | `answer`, `trafficLight` (enum)   |
+| `list`         | Structured list with field labels and items | `answer`, `headers`, `items`      |
+| `json`         | Structured data matching item schema        | `answer`, `data`, `schemaVersion` |
 
 ### List answers
 
@@ -98,6 +99,13 @@ List answers include field labels (`headers`) and structured `items`:
 
 - **`headers`**: Array of `{ key, label, type }` field label definitions. `key` matches the keys in each item map. `label` is a locale map (`{ "en": "Name", "de": "Name" }`). `type` is the data type (e.g. `text`, `date`).
 - **`items`**: Array of maps where each key corresponds to a field label `key`.
+
+### JSON answers
+
+JSON answers contain structured data extracted from case documents, matching the item's configured output schema:
+
+- **`data`**: Object with the extracted fields.
+- **`schemaVersion`**: Version tag of the schema that produced this answer.
 
 ### Actions
 

@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- netty CVEs — transitive via Spring Boot, awaiting Spring Boot Netty 4.2.x bump -->
     <suppress>
-        <notes>spring-core-6.2.8.jar</notes>
-        <cve>CVE-2025-41242</cve>
+        <notes><![CDATA[CVE-2026-42582: netty 4.1.x via Spring Boot — preempted suppression to match agent-example-quarkus.]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-.*@.*$</packageUrl>
+        <cve>CVE-2026-42582</cve>
+    </suppress>
+    <!--
+        CVE-2026-42154 (CVSS 7.5) is a Snappy-bomb DoS in the Prometheus server's
+        /api/v1/read endpoint (the Go binary). OWASP dep-check matches it against the
+        Java client libs by CPE name collision (cpe:2.3:a:prometheus:prometheus). The
+        Java metric exporters have no /api/v1/read endpoint and are wholly unaffected.
+    -->
+    <suppress>
+        <notes><![CDATA[CVE-2026-42154 affects the Prometheus server (Go); not the Java micrometer/prometheus client libs. False-positive CPE match.]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.micrometer/micrometer-registry-prometheus.*@.*$</packageUrl>
+        <cve>CVE-2026-42154</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[CVE-2026-42154 affects the Prometheus server (Go); not the Java prometheus-metrics-core lib. False-positive CPE match.]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.prometheus/prometheus-metrics-.*@.*$</packageUrl>
+        <cve>CVE-2026-42154</cve>
     </suppress>
 </suppressions>

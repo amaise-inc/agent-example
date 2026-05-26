@@ -1,43 +1,18 @@
-target/
-maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-# example
+# IntelliJ IDEA — whitelist shared project config only
+!/.idea/
+/.idea/*
+!/.idea/.gitignore
+!/.idea/compiler.xml
+!/.idea/encodings.xml
+!/.idea/google-java-format.xml
+!/.idea/jarRepositories.xml
+!/.idea/misc.xml
+!/.idea/vcs.xml
+# example app config and data
 example/.env
 example/agent.env
 example/data/grafana/*
 example/data/squid_logs/*
-
-
-#pdfs
+# example PDFs
 pdfs/*.pdf
 temp/*.pdf

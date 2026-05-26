@@ -1,0 +1,10 @@
+#Tue May 26 20:27:35 CEST 2026
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-quarkus/src/main/java/ch/legali/sdk/example/quarkus/AgentHealthCheck.java=1779174299401
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-quarkus/src/main/java/ch/legali/sdk/example/quarkus/Config.java=1779174299402
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-quarkus/src/main/java/ch/legali/sdk/example/quarkus/ExampleDashboardProcessingService.java=1779174299402
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-quarkus/src/main/java/ch/legali/sdk/example/quarkus/ExampleEventService.java=1779174299402
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-quarkus/src/main/java/ch/legali/sdk/example/quarkus/ExampleService.java=1779174299402
+/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-quarkus/src/main/resources/application.properties=1779174299402
+configuration*?=A37ECBDE8593FFF823128C891ECC94146B16BDC0
+module-resource*?\:checkstyle-suppressions.xml=B9894776DA20A3D06A8FFCE9F7E355741443316E
+module-resource*?\:checkstyle-xpath-suppressions.xml=2293191BD36F668518DBE33E57889CAD495E5F9F

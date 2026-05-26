@@ -1,0 +1,15 @@
+6KKDZubGls1Bt3yRmeW/nIE6qcIiQScpQJB5VxA2Z2Q=
+.gitignore 2026-05-19T07:04:59.403096051Z
+src/main/java/ch/legali/sdk/example/ExampleAgentMetadataThread.java 2026-05-19T07:04:59.405516662Z
+src/main/java/ch/legali/sdk/example/ExampleApplication.java 2026-05-19T07:04:59.405586787Z
+src/main/java/ch/legali/sdk/example/ExampleBulkProcessingThread.java 2026-05-19T07:04:59.405708703Z
+src/main/java/ch/legali/sdk/example/ExampleDashboardProcessingThread.java 2026-05-19T07:04:59.405836494Z
+src/main/java/ch/legali/sdk/example/ExampleEventService.java 2026-05-19T07:04:59.405960826Z
+src/main/java/ch/legali/sdk/example/ExampleService.java 2026-05-19T07:04:59.406025701Z
+src/main/java/ch/legali/sdk/example/ExampleSourceFileProcessingThread.java 2026-05-19T07:04:59.406144700Z
+src/main/java/ch/legali/sdk/example/ExampleThread.java 2026-05-19T07:04:59.406261825Z
+src/main/java/ch/legali/sdk/example/SDKSetup.java 2026-05-19T07:04:59.406413449Z
+src/main/java/ch/legali/sdk/example/config/AgentHealthIndicator.java 2026-05-19T07:04:59.406579573Z
+src/main/java/ch/legali/sdk/example/config/ApiConfig.java 2026-05-19T07:04:59.406670614Z
+src/main/java/ch/legali/sdk/example/config/ExampleConfig.java 2026-05-19T07:04:59.406752822Z
+src/test/java/ch/legali/sdk/example/ExampleAgentTest.java 2026-05-19T07:04:59.407837399Z

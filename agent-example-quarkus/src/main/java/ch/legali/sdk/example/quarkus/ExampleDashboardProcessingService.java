@@ -2,6 +2,7 @@ package ch.legali.sdk.example.quarkus;
 
 import ch.legali.api.events.LegalCaseReadyEvent;
 import ch.legali.sdk.models.AgentDashboardDTO;
+import ch.legali.sdk.models.AgentDashboardJsonAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardListAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardListHeaderDTO;
 import ch.legali.sdk.models.AgentDashboardTrafficLightAnswerDTO;
@@ -85,6 +86,22 @@ public class ExampleDashboardProcessingService {
                     .items()
                     .forEach(
                         item -> questionAnswerPairs.append(System.lineSeparator()).append(item));
+              } else if (answer instanceof AgentDashboardJsonAnswerDTO jsonAnswer) {
+                // JSON answers contain structured data matching the item's output schema
+                questionAnswerPairs
+                    .append("Schema: v")
+                    .append(jsonAnswer.schemaVersion())
+                    .append(System.lineSeparator());
+                jsonAnswer
+                    .data()
+                    .forEach(
+                        (key, value) ->
+                            questionAnswerPairs
+                                .append("  ")
+                                .append(key)
+                                .append(": ")
+                                .append(value)
+                                .append(System.lineSeparator()));
               } else {
                 questionAnswerPairs.append(answer.answer());
               }

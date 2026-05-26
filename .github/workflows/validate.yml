@@ -1,0 +1,130 @@
+# required secrets:
+# - LEGALI_CLIENT_SECRET
+# - LEGALI_CLIENT_ID
+# - SLACK_WEBHOOK_CI: Slack notification webhook
+
+name: Validate
+
+on:
+  schedule:
+    # run once per day at 06.00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  validate-sdk-agent-example-spring:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v6
+      - name: Build
+        working-directory: agent-example-spring
+        run: |
+          docker build -f docker/Dockerfile --tag amaise-agent-example-spring:latest .
+      - name: Start & Validate Agent
+        run: |
+          cat > /tmp/validate.sh << 'SCRIPT'
+          echo "# START AGENT"
+          env
+          nohup java -XX:MaxRAMPercentage=90.0 org.springframework.boot.loader.launch.JarLauncher > /tmp/tmp.log 2>&1 &
+          sleep 180
+          pkill -e java
+          echo "DONE - Looking for 'PingPong Event received' in log file..."
+          cat /tmp/tmp.log
+          if grep -q "PingPong Event received" "/tmp/tmp.log" ; then
+            echo "DONE - Looking for 'ExampleAgent run successful' in log file..."
+            if grep -q "ExampleAgent run successful" "/tmp/tmp.log" ; then
+              exit 0;
+            else
+              exit 1;
+            fi
+          else
+            exit 1;
+          fi
+          SCRIPT
+          docker run --rm \
+            --entrypoint sh \
+            -e LEGALI_AUTH_URL=https://auth.dev.amaise.com \
+            -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} \
+            -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 \
+            -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }} \
+            -v /tmp/validate.sh:/tmp/validate.sh \
+            amaise-agent-example-spring:latest \
+            /tmp/validate.sh
+
+  validate-sdk-agent-example-quarkus:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v6
+      - name: Build
+        working-directory: agent-example-quarkus
+        run: |
+          docker build -f src/main/docker/Dockerfile.jvm --tag amaise-agent-example-quarkus:latest .
+      - name: Start & Validate Agent
+        run: |
+          cat > /tmp/validate.sh << 'SCRIPT'
+          echo "# START AGENT"
+          env
+          nohup /opt/jboss/container/java/run/run-java.sh > /tmp/tmp.log 2>&1 &
+          sleep 90
+          pkill -e java
+          echo "DONE - Looking for 'got pong event' in log file..."
+          cat /tmp/tmp.log
+          if grep -q "got pong event" "/tmp/tmp.log" ; then
+            echo "ExampleAgent run successful' in log file..."
+            if grep -q "ExampleAgent run successful" "/tmp/tmp.log" ; then
+              exit 0;
+            else
+              exit 1;
+            fi
+          else
+            exit 1;
+          fi
+          SCRIPT
+          docker run --rm \
+            --entrypoint sh \
+            -e LEGALI_AUTH_URL=https://auth.dev.amaise.com \
+            -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} \
+            -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 \
+            -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }} \
+            -v /tmp/validate.sh:/tmp/validate.sh \
+            amaise-agent-example-quarkus:latest \
+            /tmp/validate.sh
+
+  validate-sdk-agent-example-nodejs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v6
+      - name: Fetch OpenAPI spec
+        working-directory: agent-example-nodejs
+        run: wget -q -O openapi-agent.json "https://api.eu.amaise.com/doc/api-documentation/AGENT-SDK"
+      - name: Build Docker image
+        working-directory: agent-example-nodejs
+        run: docker build --tag amaise-agent-example-nodejs .
+      - name: Validate Agent
+        run: |
+          docker run --rm \
+            -e LEGALI_AUTH_URL=https://auth.dev.amaise.com \
+            -e LEGALI_CLIENT_ID=${{ secrets.LEGALI_CLIENT_ID }} \
+            -e LEGALI_API_URL=https://agents.dev.amaise.com/agents/v1 \
+            -e LEGALI_CLIENT_SECRET=${{ secrets.LEGALI_CLIENT_SECRET }} \
+            amaise-agent-example-nodejs 2>&1 | tee /tmp/validate.log
+          grep -q "Pong received" /tmp/validate.log
+          grep -q "Validation successful" /tmp/validate.log
+
+  notify-failure:
+    name: "Notify Failure"
+    needs: [validate-sdk-agent-example-spring, validate-sdk-agent-example-quarkus, validate-sdk-agent-example-nodejs]
+    if: >-
+      always()
+      && (needs.validate-sdk-agent-example-spring.result == 'failure'
+      || needs.validate-sdk-agent-example-quarkus.result == 'failure'
+      || needs.validate-sdk-agent-example-nodejs.result == 'failure')
+    uses: ./.github/workflows/_notify-slack.yml
+    with:
+      environment: validate
+      status: failure
+    secrets:
+      SLACK_WEBHOOK_CI: ${{ secrets.SLACK_WEBHOOK_CI }}

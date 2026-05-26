@@ -49,11 +49,12 @@ The `ExampleDashboardProcessingService` demonstrates how to retrieve and process
 
 Dashboard answers are polymorphic — each answer has a `type` discriminator:
 
-| Type           | Java Type                             | Key Fields                         |
-| -------------- | ------------------------------------- | ---------------------------------- |
-| `answer`       | `AgentDashboardAnswerDTO`             | `answer()`                         |
-| `trafficLight` | `AgentDashboardTrafficLightAnswerDTO` | `answer()`, `trafficLight()`       |
-| `list`         | `AgentDashboardListAnswerDTO`         | `answer()`, `headers()`, `items()` |
+| Type           | Java Type                             | Key Fields                              |
+| -------------- | ------------------------------------- | --------------------------------------- |
+| `answer`       | `AgentDashboardAnswerDTO`             | `answer()`                              |
+| `trafficLight` | `AgentDashboardTrafficLightAnswerDTO` | `answer()`, `trafficLight()`            |
+| `list`         | `AgentDashboardListAnswerDTO`         | `answer()`, `headers()`, `items()`      |
+| `json`         | `AgentDashboardJsonAnswerDTO`         | `answer()`, `data()`, `schemaVersion()` |
 
 ### List answers
 
@@ -61,6 +62,13 @@ List answers include column `headers()` and structured `items()`:
 
 - **`headers()`**: List of `AgentDashboardListHeaderDTO` with `key()` (matches item map keys), `label()` (locale map), and `type()` (data type).
 - **`items()`**: List of `Map<String, Object>` where each key corresponds to a header `key()`.
+
+### JSON answers
+
+JSON answers contain structured data extracted from case documents, matching the item's configured output schema:
+
+- **`data()`**: `Map<String, Object>` with the extracted fields.
+- **`schemaVersion()`**: Version tag of the schema that produced this answer.
 
 ### Actions
 

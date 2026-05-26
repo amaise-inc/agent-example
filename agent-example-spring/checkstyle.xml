@@ -104,6 +104,13 @@ https://www.oracle.com/java/technologies/javase/codeconventions-contents.html
 
     <module name="TreeWalker">
 
+        <!-- Forbid `var` local variable declarations. Project convention is explicit types. -->
+        <module name="MatchXpath">
+            <property name="id" value="noVarKeyword" />
+            <property name="query" value="//VARIABLE_DEF/TYPE/IDENT[@text='var']" />
+            <message key="matchxpath.match" value="Use an explicit type instead of 'var' (project convention)." />
+        </module>
+
         <!-- Checks for Javadoc comments.                     -->
         <!-- See https://checkstyle.org/checks/javadoc/index.html -->
         <module name="InvalidJavadocPosition" />

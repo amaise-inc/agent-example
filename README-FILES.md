@@ -1,15 +1,24 @@
 # File Transfer API
 
-The amaise SDK uses presigned URLs to upload and download files directly to AWS for efficiency and stability.
+The amaise SDK uses presigned URLs to upload and download files directly via AWS CloudFront for efficiency and stability.
 
-Based on the data location of the tenant, the presigned URLs will point eihter to `https://data.amaise.com/` (Germany), `https://data-ch.amaise.com/` (Switzerland) or `https://data-us.amaise.com` (United States).
+Based on the data region of the workspace, the presigned URLs will point to the corresponding CloudFront endpoint:
+
+| Data Region                | Download URL pattern                   | Upload URL pattern                    |
+| -------------------------- | -------------------------------------- | ------------------------------------- |
+| Germany (eu-central-1)     | `https://data.{region}.amaise.com/`    | `https://upload.{region}.amaise.com/` |
+| Switzerland (eu-central-2) | `https://data-ch.{region}.amaise.com/` | `https://upload.{region}.amaise.com/` |
+| United States (us-east-2)  | `https://data-us.{region}.amaise.com/` | `https://upload.{region}.amaise.com/` |
+
+Where `{region}` is `eu`, `us`, `ch`, or `dev`. The exact URLs for your workspace are shown in the amaise workspace
+settings under **Integration > File Transfer**.
 
 ## Flow for File Download
 
 **The SDK requests a presigned URL from the amaise files API. HTTP 307 with the presigned URL in the location header is returned.**
 
 ```
-REQUEST: https://agents.eu.amaise.com/agents/v1/files/556a0908-0dcf-49f9-ab34-898d7f3a6212/EXPORT/b479a684-db08-4f34-8f11-5c28fdff157c.pdf GET
+REQUEST: https://{subdomain}.agents.eu.amaise.com/agents/v1/files/556a0908-0dcf-49f9-ab34-898d7f3a6212/EXPORT/b479a684-db08-4f34-8f11-5c28fdff157c.pdf GET
 	:authority: agents-suffix.amaise.com
 	:method: GET
 	:path: /agents/v1/files/556a0908-0dcf-49f9-ab34-898d7f3a6212/EXPORT/b479a684-db08-4f34-8f11-5c28fdff157c.pdf

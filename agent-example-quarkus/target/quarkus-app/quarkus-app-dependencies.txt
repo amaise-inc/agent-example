@@ -1,4 +1,4 @@
-ch.legali:agent-sdk::jar:1.18.0
+ch.legali:agent-sdk::jar:1.18.1
 com.aayushatharva.brotli4j:brotli4j::jar:1.23.0
 com.aayushatharva.brotli4j:native-osx-aarch64::jar:1.23.0
 com.aayushatharva.brotli4j:service::jar:1.23.0

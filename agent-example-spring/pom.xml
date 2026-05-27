@@ -15,7 +15,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.18.0</version>
+    <version>1.18.1</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
 
@@ -36,6 +36,9 @@
         <checkstyle.version>3.6.0</checkstyle.version>
         <!-- Override log4j2 to fix CVE-2026-34478/34480/34481 (≤ 2.25.3 vulnerable) -->
         <log4j2.version>2.25.4</log4j2.version>
+        <!-- feign-micrometer 13.12 needs MeterRegistry.timer(String, Tags), added in Micrometer 1.16.0 -->
+        <micrometer.version>1.16.5</micrometer.version>
+        <micrometer-tracing.version>1.5.11</micrometer-tracing.version>
     </properties>
 
 

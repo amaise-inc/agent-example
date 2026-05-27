@@ -1,7 +1,7 @@
 
 Lists of 239 third-party dependencies.
      (Public Domain) AOP alliance (aopalliance:aopalliance:1.0 - http://aopalliance.sourceforge.net)
-     (Unknown license) Agent SDK (ch.legali:agent-sdk:1.18.0 - no url defined)
+     (Unknown license) Agent SDK (ch.legali:agent-sdk:1.18.1 - no url defined)
      (Apache License 2.0) Brotli4j (com.aayushatharva.brotli4j:brotli4j:1.23.0 - https://github.com/hyperxpro/Brotli4j/brotli4j)
      (Apache License 2.0) Brotli4j (com.aayushatharva.brotli4j:native-osx-aarch64:1.23.0 - https://github.com/hyperxpro/Brotli4j/natives/native-osx-aarch64)
      (Apache License 2.0) Brotli4j (com.aayushatharva.brotli4j:service:1.23.0 - https://github.com/hyperxpro/Brotli4j/service)

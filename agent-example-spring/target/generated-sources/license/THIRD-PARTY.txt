@@ -1,6 +1,6 @@
 
 Lists of 110 third-party dependencies.
-     (Unknown license) Agent SDK (ch.legali:agent-sdk:1.18.1 - no url defined)
+     (Unknown license) Agent SDK (ch.legali:agent-sdk:1.18.2 - no url defined)
      (Eclipse Public License - v 2.0) (GNU Lesser General Public License) Logback Classic Module (ch.qos.logback:logback-classic:1.5.32 - http://logback.qos.ch/logback-classic)
      (Eclipse Public License - v 2.0) (GNU Lesser General Public License) Logback Core Module (ch.qos.logback:logback-core:1.5.32 - http://logback.qos.ch/logback-core)
      (Apache License, Version 2.0) ClassMate (com.fasterxml:classmate:1.7.3 - https://github.com/FasterXML/java-classmate)
@@ -61,7 +61,7 @@ Lists of 110 third-party dependencies.
      (BSD-3-Clause) Hamcrest (org.hamcrest:hamcrest:3.0 - http://hamcrest.org/JavaHamcrest/)
      (BSD-2-Clause) (Public Domain, per Creative Commons CC0) HdrHistogram (org.hdrhistogram:HdrHistogram:2.2.2 - http://hdrhistogram.github.io/HdrHistogram/)
      (Apache License 2.0) Hibernate Validator Engine (org.hibernate.validator:hibernate-validator:8.0.3.Final - https://hibernate.org/validator)
-     (The Apache Software License, Version 2.0) org.immutables.value (org.immutables:value:2.12.1 - https://github.com/immutables/immutables/tree/value)
+     (The Apache Software License, Version 2.0) org.immutables.value (org.immutables:value:2.12.2 - https://github.com/immutables/immutables/tree/value)
      (Apache License 2.0) JBoss Logging 3 (org.jboss.logging:jboss-logging:3.6.3.Final - https://www.jboss.org)
      (Apache License 2.0) JBoss Threads (org.jboss.threads:jboss-threads:3.7.0.Final - http://www.jboss.org)
      (Apache License 2.0) XNIO API (org.jboss.xnio:xnio-api:3.8.16.Final - http://www.jboss.org/xnio)

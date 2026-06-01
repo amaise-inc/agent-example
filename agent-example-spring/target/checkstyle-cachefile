@@ -1,18 +1,18 @@
-#Wed May 27 12:35:44 CEST 2026
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleAgentMetadataThread.java=1779174299405
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleApplication.java=1779174299405
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleBulkProcessingThread.java=1779174299405
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleDashboardProcessingThread.java=1779174299405
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleEventService.java=1779174299405
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleService.java=1779174299406
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleSourceFileProcessingThread.java=1779174299406
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleThread.java=1779174299406
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/SDKSetup.java=1779174299406
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/AgentHealthIndicator.java=1779174299406
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/ApiConfig.java=1779174299406
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/ExampleConfig.java=1779174299406
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/main/resources/application.properties=1779174299406
-/Users/aime/Work/amaise-analyse/sdk/agent-example/agent-example-spring/src/test/resources/application.properties=1779174299407
-configuration*?=C60A1274AB9F24F8925779F42084AA1F27EC0F25
+#Mon Jun 01 12:10:10 CEST 2026
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleAgentMetadataThread.java=1778265176486
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleApplication.java=1778265176486
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleBulkProcessingThread.java=1778265176486
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleDashboardProcessingThread.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleEventService.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleService.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleSourceFileProcessingThread.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/ExampleThread.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/SDKSetup.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/AgentHealthIndicator.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/ApiConfig.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/java/ch/legali/sdk/example/config/ExampleConfig.java=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/main/resources/application.properties=1778265176487
+/Users/markus/dev/amaise6/sdk/agent-example/agent-example-spring/src/test/resources/application.properties=1778265176489
+configuration*?=E58C8CF157DC3D61717B9075D51DE7ACFD7022A5
 module-resource*?\:checkstyle-suppressions.xml=B9894776DA20A3D06A8FFCE9F7E355741443316E
 module-resource*?\:checkstyle-xpath-suppressions.xml=D0D2D8A0F5A77CC503CA5804309D852A809DBCA1

@@ -1,7 +1,7 @@
-6KKDZubGls1Bt3yRmeW/nIE6qcIiQScpQJB5VxA2Z2Q=
-.gitignore 2026-05-19T07:04:59.399221198Z
-src/main/java/ch/legali/sdk/example/quarkus/AgentHealthCheck.java 2026-05-19T07:04:59.401977557Z
-src/main/java/ch/legali/sdk/example/quarkus/Config.java 2026-05-19T07:04:59.402107098Z
-src/main/java/ch/legali/sdk/example/quarkus/ExampleDashboardProcessingService.java 2026-05-19T07:04:59.402256014Z
-src/main/java/ch/legali/sdk/example/quarkus/ExampleEventService.java 2026-05-19T07:04:59.402393638Z
-src/main/java/ch/legali/sdk/example/quarkus/ExampleService.java 2026-05-19T07:04:59.402518888Z
+/A88TOFjUh4IATRsYprJyaAvwSi7Zaa+LrK7YiNVqYY=
+.gitignore 2026-05-08T18:32:56.480491643Z
+src/main/java/ch/legali/sdk/example/quarkus/AgentHealthCheck.java 2026-05-08T18:32:56.483026217Z
+src/main/java/ch/legali/sdk/example/quarkus/Config.java 2026-05-08T18:32:56.483149010Z
+src/main/java/ch/legali/sdk/example/quarkus/ExampleDashboardProcessingService.java 2026-05-08T18:32:56.483306387Z
+src/main/java/ch/legali/sdk/example/quarkus/ExampleEventService.java 2026-05-08T18:32:56.483443972Z
+src/main/java/ch/legali/sdk/example/quarkus/ExampleService.java 2026-05-08T18:32:56.483776393Z

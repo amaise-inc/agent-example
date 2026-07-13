@@ -508,7 +508,8 @@ public class ExampleThread implements Runnable {
    * @return String an example xfdf file
    */
   private String getExampleXfdf() {
-    return """
+    return
+"""
 <?xml version="1.0" encoding="UTF-8"?>
 <xfdf xmlns="http://ns.adobe.com/xfdf/">
     <annots>
@@ -522,6 +523,7 @@ public class ExampleThread implements Runnable {
             <contents>Hello World</contents>
         </highlight>
     </annots>
-</xfdf>""";
+</xfdf>\
+""";
   }
 }

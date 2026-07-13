@@ -8,13 +8,13 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-quarkus</artifactId>
-    <version>1.18.2</version>
+    <version>1.18.3</version>
     <name>Agent Example (Quarkus)</name>
     <description>amaise Agent Example (Quarkus)</description>
 
     <properties>
         <!-- Encoding & Java -->
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -24,18 +24,20 @@
         <!-- Quarkus Platform -->
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-        <quarkus.platform.version>3.36.0</quarkus.platform.version>
+        <quarkus.platform.version>3.37.0</quarkus.platform.version>
 
         <!-- Maven Plugins Versions -->
         <surefire.plugin.version>3.5.6</surefire.plugin.version>
         <compiler.plugin.version>3.15.0</compiler.plugin.version>
         <failsafe.plugin.version>3.5.6</failsafe.plugin.version>
-        <spotbugs.maven.plugin.version>4.9.8.3</spotbugs.maven.plugin.version>
-        <spotbugs.core.version>4.9.8</spotbugs.core.version>
+        <spotbugs.maven.plugin.version>4.10.2.0</spotbugs.maven.plugin.version>
+        <spotbugs.core.version>4.10.2</spotbugs.core.version>
         <spotless.maven.plugin.version>2.46.1</spotless.maven.plugin.version>
-        <spotless.java.format.version>1.22.0</spotless.java.format.version>
+        <spotless.java.format.version>1.28.0</spotless.java.format.version>
         <checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
         <dependency-check.version>12.2.2</dependency-check.version>
+        <!-- dependency-check NVD auto-download; set false to reuse a pre-populated cache -->
+        <owasp.autoUpdate>true</owasp.autoUpdate>
 
         <!-- Utility -->
         <skipITs>true</skipITs>
@@ -51,6 +53,20 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Override jackson to fix CVE-2026-54515 (2.22.0 vulnerable); import before quarkus-bom so it wins -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.22.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Override pdfbox (transitive via agent-sdk) to fix CVE-2026-23907/33929 (3.0.7 vulnerable) -->
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>3.0.8</version>
+            </dependency>
             <dependency>
                 <groupId>${quarkus.platform.group-id}</groupId>
                 <artifactId>${quarkus.platform.artifact-id}</artifactId>
@@ -246,13 +262,14 @@
                     <dataDirectory>${user.home}/.depcheck-cache</dataDirectory>
                     <nvdValidForHours>24</nvdValidForHours>
                     <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                    <autoUpdate>${owasp.autoUpdate}</autoUpdate>
                     <skipProvidedScope>true</skipProvidedScope>
                     <skipRuntimeScope>true</skipRuntimeScope>
                     <skipSystemScope>true</skipSystemScope>
                     <skipTestScope>true</skipTestScope>
                     <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                     <!-- NOTE(mba): disabled due to auth required -->
-                    <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+                    <ossIndexAnalyzerEnabled>false</ossIndexAnalyzerEnabled>
                     <failBuildOnCVSS>7</failBuildOnCVSS>
                     <suppressionFile>./project-suppression.xml</suppressionFile>
                 </configuration>
@@ -279,6 +296,33 @@
             <properties>
                 <skipITs>false</skipITs>
                 <quarkus.package.type>native</quarkus.package.type>
+            </properties>
+        </profile>
+        <!-- Opt-in offline mode: set AMAISE_NVD_CACHED to scan a pre-populated NVD cache
+             instead of downloading. Unset → live download. -->
+        <profile>
+            <id>ci-owasp-cached</id>
+            <activation>
+                <property>
+                    <name>env.AMAISE_NVD_CACHED</name>
+                </property>
+            </activation>
+            <properties>
+                <owasp.autoUpdate>false</owasp.autoUpdate>
+            </properties>
+        </profile>
+        <!-- Skip the OWASP dependency-check when SKIP_DEPENDENCY_AUDIT is set. The standalone
+             agent-example repo sets it (no warmed NVD cache there and the NVD API is unstable);
+             the monorepo CI leaves it unset so the scan runs. -->
+        <profile>
+            <id>skip-dependency-audit</id>
+            <activation>
+                <property>
+                    <name>env.SKIP_DEPENDENCY_AUDIT</name>
+                </property>
+            </activation>
+            <properties>
+                <dependency-check.skip>true</dependency-check.skip>
             </properties>
         </profile>
     </profiles>

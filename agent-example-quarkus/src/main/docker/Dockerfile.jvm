@@ -81,7 +81,7 @@
 #
 ###
 
-FROM registry.access.redhat.com/ubi9/openjdk-21:1.21 AS builder
+FROM registry.access.redhat.com/ubi9/openjdk-25:1.24 AS builder
 
 USER root
 WORKDIR /app
@@ -93,7 +93,7 @@ RUN chmod +x ./mvnw
 RUN ./mvnw package -DskipTests
 
 
-FROM registry.access.redhat.com/ubi9/openjdk-21:1.21
+FROM registry.access.redhat.com/ubi9/openjdk-25:1.24
 ENV LANGUAGE='en_US:en'
 
 # We make four distinct layers so if there are application changes the library layers can be re-used

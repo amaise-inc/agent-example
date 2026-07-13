@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Prevent dotenv from trying to load a real .env file
-vi.mock('dotenv/config', () => ({}));
+vi.mock('dotenv', () => ({ config: () => ({ parsed: {} }) }));
 
 /** Set the four required env vars to valid defaults. */
 function setRequiredEnv() {

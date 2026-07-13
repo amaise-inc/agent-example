@@ -108,7 +108,7 @@ legali.client-secret=<>
 
 # Set departments and tenant ids
 legali.example.tenants.department-1=ef99fd60-e06e-4e2a-99b5-01bc37f710ae
-legali.example.tenants.department-2=526602b4-0e96-4c90-bc28-ce720c9c6521
+legali.example.tenants.department-2=25dd34b6-4029-4a4d-a847-8135e252c54c
 
 # Dashboard processing
 legali.example.dashboard-id=353d217b-987d-4880-95c4-57eea033075a

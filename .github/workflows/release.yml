@@ -8,53 +8,41 @@ on:
 jobs:
   build-example-spring:
     runs-on: ubuntu-latest
+    # The NVD API is unstable and this repo has no warmed NVD cache, so skip the OWASP
+    # dependency-check here (the monorepo CI leaves this unset and runs the scan).
+    env:
+      SKIP_DEPENDENCY_AUDIT: 'true'
 
     steps:
       - uses: actions/checkout@v6
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           cache: maven
           cache-dependency-path: agent-example-spring/pom.xml
-      - name: Cache NVD database
-        uses: actions/cache@v5
-        with:
-          path: ~/.depcheck-cache
-          key: depcheck-nvd-runner-v1
-          restore-keys: depcheck-nvd-runner-
-
       - name: Build with Maven
         working-directory: agent-example-spring
         run: make verify
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
   build-example-quarkus:
     runs-on: ubuntu-latest
+    env:
+      SKIP_DEPENDENCY_AUDIT: 'true'
 
     steps:
       - uses: actions/checkout@v6
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           cache: maven
           cache-dependency-path: agent-example-quarkus/pom.xml
-      - name: Cache NVD database
-        uses: actions/cache@v5
-        with:
-          path: ~/.depcheck-cache
-          key: depcheck-nvd-runner-v1
-          restore-keys: depcheck-nvd-runner-
-
       - name: Build with Maven
         working-directory: agent-example-quarkus
         run: make verify
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
   build-example-nodejs:
     runs-on: ubuntu-latest

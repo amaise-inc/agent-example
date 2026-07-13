@@ -4,8 +4,10 @@
  * All other modules import `config` from here; none read process.env directly.
  */
 
-import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
 import { createRequire } from 'node:module';
+
+loadEnv({ quiet: true });
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json') as { version: string };

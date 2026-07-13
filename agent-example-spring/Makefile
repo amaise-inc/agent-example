@@ -19,12 +19,12 @@ clean:
 
 ## install: mvn install (pre-downloads dependencies for cache efficiency)
 install:
-	@${maven_cmd} -B dependency:go-offline
+	@${maven_cmd} -B dependency:resolve dependency:resolve-plugins
 	${maven_cmd} install -DskipTests
 
 ## build: build the agent
 build:
-	@${maven_cmd} -B dependency:go-offline
+	@${maven_cmd} -B dependency:resolve dependency:resolve-plugins
 	@${maven_cmd} package -DskipTests
 
 ## format: run spotless google java formatter

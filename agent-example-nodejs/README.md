@@ -13,7 +13,7 @@ It demonstrates the core integration flows:
 
 ## Prerequisites
 
-- Node.js >= 22
+- Node.js >= 24
 - Agent credentials from your amaise workspace (Settings > Integration)
 
 ## Setup

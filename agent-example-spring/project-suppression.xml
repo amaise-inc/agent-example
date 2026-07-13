@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-    <!-- netty CVEs — transitive via Spring Boot, awaiting Spring Boot Netty 4.2.x bump -->
-    <suppress>
-        <notes><![CDATA[CVE-2026-42582: netty 4.1.x via Spring Boot — preempted suppression to match agent-example-quarkus.]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-.*@.*$</packageUrl>
-        <cve>CVE-2026-42582</cve>
-    </suppress>
     <!--
         CVE-2026-42154 (CVSS 7.5) is a Snappy-bomb DoS in the Prometheus server's
         /api/v1/read endpoint (the Go binary). OWASP dep-check matches it against the

@@ -13,7 +13,9 @@ COPY src src
 RUN chmod +x ./mvnw
 RUN ./mvnw package -DskipTests
 
-RUN java -Djarmode=layertools -jar target/agent.jar extract
+# Spring Boot 4.x removed the 'layertools' jarmode; 'tools extract --layers --launcher' reproduces
+# the layered, exploded layout the JarLauncher entrypoint needs.
+RUN java -Djarmode=tools -jar target/agent.jar extract --layers --launcher --destination extracted
 
 ### RUNTIME image
 FROM eclipse-temurin:25 AS runtime
@@ -29,13 +31,13 @@ RUN groupadd -r legali && useradd --no-log-init -r -g legali legali
 # Create base app folder
 WORKDIR /app
 # Workaround for copy issue
-COPY --from=builder /app/dependencies/ ./
+COPY --from=builder /app/extracted/dependencies/ ./
 RUN true
-COPY --from=builder /app/snapshot-dependencies/ ./
+COPY --from=builder /app/extracted/snapshot-dependencies/ ./
 RUN true
-COPY --from=builder /app/spring-boot-loader/ ./
+COPY --from=builder /app/extracted/spring-boot-loader/ ./
 RUN true
-COPY --from=builder /app/application/ ./
+COPY --from=builder /app/extracted/application/ ./
 
 EXPOSE 8085
 USER legali

@@ -7,7 +7,6 @@
     <suppress files="." checks="JavadocMethod"/>
     <suppress files="." checks="JavadocPackage"/>
     <suppress files="." checks="JavadocVariable"/>
-    <suppress files="." checks="JavadocStyle"/>
     <suppress files="." checks="JavadocType"/>
     <suppress files="." checks="MissingJavadocMethod"/>
     <suppress files="." checks="JavadocPackage"/>

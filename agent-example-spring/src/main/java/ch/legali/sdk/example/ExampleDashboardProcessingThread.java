@@ -6,6 +6,7 @@ import ch.legali.sdk.models.AgentDashboardAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardDTO;
 import ch.legali.sdk.models.AgentDashboardJsonAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardListAnswerDTO;
+import ch.legali.sdk.models.AgentDashboardResearchAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardTrafficLightAnswerDTO;
 import ch.legali.sdk.models.AgentLegalCaseDTO;
 import ch.legali.sdk.models.AgentSourceFileDTO;
@@ -129,9 +130,26 @@ public class ExampleDashboardProcessingThread implements Runnable {
                                 .append(": ")
                                 .append(value)
                                 .append("\n"));
+              } else if (answer instanceof AgentDashboardResearchAnswerDTO researchAnswer) {
+                // Research answers add the external sources they were synthesized from. When
+                // grounded is false no source backed the answer.
+                questionAnswerPairs
+                    .append(researchAnswer.answer())
+                    .append("\n")
+                    .append(researchAnswer.grounded() ? "Sources: " : "Not grounded in any source");
+                researchAnswer
+                    .externalSources()
+                    .forEach(
+                        source ->
+                            questionAnswerPairs
+                                .append("\n  ")
+                                .append(source.title() != null ? source.title() : source.url())
+                                .append(" — ")
+                                .append(source.url()));
               } else if (answer instanceof AgentDashboardAnswerDTO simpleAnswer) {
                 questionAnswerPairs.append(simpleAnswer.answer());
               } else {
+                // An answer type this SDK version does not know yet still carries its text.
                 questionAnswerPairs.append(answer.answer());
               }
               questionAnswerPairs.append(System.lineSeparator()).append(System.lineSeparator());

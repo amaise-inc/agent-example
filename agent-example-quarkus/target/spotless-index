@@ -1,7 +1,0 @@
-P4zMqk8V+qnRyiw/F0Bzq8mlSI9vUQn8BNI9ZS1bvl4=
-.gitignore 2026-05-04T10:52:10.909484131Z
-src/main/java/ch/legali/sdk/example/quarkus/AgentHealthCheck.java 2026-05-04T10:52:10.910484144Z
-src/main/java/ch/legali/sdk/example/quarkus/Config.java 2026-05-04T10:52:10.910484144Z
-src/main/java/ch/legali/sdk/example/quarkus/ExampleDashboardProcessingService.java 2026-05-04T10:52:10.910484144Z
-src/main/java/ch/legali/sdk/example/quarkus/ExampleEventService.java 2026-05-04T10:52:10.911484156Z
-src/main/java/ch/legali/sdk/example/quarkus/ExampleService.java 2026-05-05T12:06:16.470161101Z

@@ -1,2 +1,4 @@
 *.internal
 pdfs/
+# This file travels to the public mirror; the repo-root rule does not.
+target/

@@ -9,13 +9,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <relativePath></relativePath>
     </parent>
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-spring</artifactId>
-    <version>1.18.3</version>
+    <version>1.19.0</version>
     <name>Agent Example (Spring)</name>
     <description>amaise Agent Example (Spring)</description>
 
@@ -26,19 +26,21 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Plugin and Development Versions -->
-        <spotbugs.version>4.10.2</spotbugs.version>
+        <spotbugs.version>4.10.4</spotbugs.version>
         <spotless.version>2.46.1</spotless.version>
         <google-java-format.version>1.28.0</google-java-format.version>
         <dependency-check.version>12.2.2</dependency-check.version>
         <!-- dependency-check NVD auto-download; set false to reuse a pre-populated cache -->
         <owasp.autoUpdate>true</owasp.autoUpdate>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
-        <spotbugs.maven.plugin.version>4.10.2.0</spotbugs.maven.plugin.version>
-        <checkstyle.version>3.6.0</checkstyle.version>
+        <spotbugs.maven.plugin.version>4.10.4.0</spotbugs.maven.plugin.version>
+        <checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
+        <!-- Engine pin: the plugin's bundled default lags the Java release this module compiles at. -->
+        <checkstyle.version>14.0.0</checkstyle.version>
         <!-- Override log4j2 to fix CVE-2026-34478/34480/34481 (≤ 2.25.3 vulnerable) -->
         <log4j2.version>2.26.0</log4j2.version>
-        <!-- Override Tomcat to fix CVE-2026-55276/53434/53404 (11.0.22 vulnerable) -->
-        <tomcat.version>11.0.23</tomcat.version>
+        <!-- Override Tomcat: the Boot-managed version trails the advisories dep-check gates on. -->
+        <tomcat.version>11.0.25</tomcat.version>
         <!-- Override jackson 2 to fix CVE-2026-54515 (2.21.4 vulnerable); Spring Boot 4 splits this
              from the Jackson 3 tools.jackson bom (jackson-bom.version) -->
         <jackson-2-bom.version>2.21.5</jackson-2-bom.version>
@@ -48,6 +50,8 @@
 
 
     <repositories>
+        <!-- ch.legali must resolve from here, and Maven can only order repositories — see
+             https://docs.amaise.com/guide/agent.html#adding-the-sdk-to-your-build -->
         <repository>
             <id>amaise</id>
             <name>amaise Maven Repository</name>
@@ -199,7 +203,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle.version}</version>
+                <version>${checkstyle.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>

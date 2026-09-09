@@ -5,6 +5,7 @@ import ch.legali.sdk.models.AgentDashboardDTO;
 import ch.legali.sdk.models.AgentDashboardJsonAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardListAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardListHeaderDTO;
+import ch.legali.sdk.models.AgentDashboardResearchAnswerDTO;
 import ch.legali.sdk.models.AgentDashboardTrafficLightAnswerDTO;
 import ch.legali.sdk.services.DashboardService;
 import ch.legali.sdk.services.LegalCaseService;
@@ -102,7 +103,25 @@ public class ExampleDashboardProcessingService {
                                 .append(": ")
                                 .append(value)
                                 .append(System.lineSeparator()));
+              } else if (answer instanceof AgentDashboardResearchAnswerDTO researchAnswer) {
+                // Research answers add the external sources they were synthesized from. When
+                // grounded is false no source backed the answer.
+                questionAnswerPairs
+                    .append(researchAnswer.answer())
+                    .append(System.lineSeparator())
+                    .append(researchAnswer.grounded() ? "Sources: " : "Not grounded in any source");
+                researchAnswer
+                    .externalSources()
+                    .forEach(
+                        source ->
+                            questionAnswerPairs
+                                .append(System.lineSeparator())
+                                .append("  ")
+                                .append(source.title() != null ? source.title() : source.url())
+                                .append(" — ")
+                                .append(source.url()));
               } else {
+                // An answer type this SDK version does not know yet still carries its text.
                 questionAnswerPairs.append(answer.answer());
               }
               questionAnswerPairs.append(System.lineSeparator()).append(System.lineSeparator());

@@ -82,18 +82,52 @@ jobs:
 
       - name: Build Release
         run: |
-          zip -r sdk-release.zip quickstart \
-            agent-example-spring/{docker,Makefile,mvn*,pmd*,pom.xml,proj*,README.md,spot*,src} \
-            agent-example-quarkus/{Makefile,mvn*,pmd*,pom.xml,proj*,README.md,spot*,src} \
-            agent-example-nodejs/{.prettierrc,Dockerfile,Makefile,package.json,package-lock.json,openapi-ts.config.ts,tsconfig.json,vitest.config.ts,README.md,lib,examples,ci,assets}
+          grep -vE '^[[:space:]]*(#|$)' release-manifest.txt > /tmp/manifest.txt
+          while IFS= read -r path; do
+            [ -e "$path" ] || { echo "::error::release-manifest.txt lists a missing path: $path"; exit 1; }
+          done < /tmp/manifest.txt
+          tr '\n' '\0' < /tmp/manifest.txt | xargs -0 zip -qr sdk-release.zip
 
-      - uses: ncipollo/release-action@v1
+      # A customer's first act is to unzip and build, so do exactly that before
+      # the draft exists. Globs never matched .mvn, so every artefact published
+      # so far could not bootstrap ./mvnw and no gate noticed.
+      - name: Build every example from the artefact
+        run: |
+          unzip -q sdk-release.zip -d /tmp/unpacked
+          (cd /tmp/unpacked/agent-example-spring && ./mvnw -B -q package -DskipTests)
+          (cd /tmp/unpacked/agent-example-quarkus && ./mvnw -B -q package -DskipTests)
+          cd /tmp/unpacked/agent-example-nodejs
+          npm ci
+          wget -q -O openapi-agent.json "https://api.eu.amaise.com/doc/api-documentation/AGENT-SDK"
+          npm run generate
+          make verify
+
+      # Fails when the tag has no CHANGELOG section, so a release can never be
+      # cut with the placeholder body a human then has to retype.
+      # Inlined rather than calling sdk/tools/, which is outside the mirrored
+      # subtree and so does not exist in the repository this workflow runs in.
+      - name: Assemble the release body
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
+        run: |
+          awk -v want="## $VERSION" '
+            $0 == want { collecting = 1; next }
+            collecting && /^## / { exit }
+            collecting { print }
+          ' CHANGELOG.md > release-body.md
+          if ! grep -q '[^[:space:]]' release-body.md; then
+            echo "::error::CHANGELOG.md has no '## $VERSION' section"
+            exit 1
+          fi
+          cat release-body.md
+
+      - uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1
         with:
           artifacts: 'sdk-release.zip'
           tag: ${{ steps.get_version.outputs.VERSION }}
           name: Release ${{ steps.get_version.outputs.VERSION }}
           draft: true
-          bodyFile: release_template.md
+          bodyFile: release-body.md
           allowUpdates: false
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}

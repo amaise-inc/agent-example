@@ -26,7 +26,7 @@ jobs:
       EMOJI: ${{ inputs.status == 'success' && ':large_green_circle:' || ':red_circle:' }}
     steps:
       - name: Send Slack notification
-        uses: slackapi/slack-github-action@v3.0.3
+        uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_CI }}
           webhook-type: incoming-webhook

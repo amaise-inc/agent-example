@@ -1,0 +1,59 @@
+# Everything that ships in sdk-release.zip, one path per line (directories recurse).
+#
+# Read by release.yml, which builds the asset, and by the monorepo's release-artifact
+# CI job, which unzips it and builds all three examples. Both fail on a listed path
+# that does not exist, so this file cannot rot quietly the way a brace list did.
+#
+# Dotfiles MUST be listed explicitly. A glob never matches a leading dot, which is how
+# .mvn (the Maven wrapper) went missing from every artifact published so far.
+
+LICENSE.txt
+CHANGELOG.md
+README.md
+README-FILES.md
+SECURITY.md
+.gitignore
+quickstart
+
+agent-example-spring/.mvn
+agent-example-spring/Makefile
+agent-example-spring/README.md
+agent-example-spring/checkstyle.xml
+agent-example-spring/checkstyle-suppressions.xml
+agent-example-spring/docker
+agent-example-spring/mvnw
+agent-example-spring/mvnw.cmd
+agent-example-spring/pmd_ignore.properties
+agent-example-spring/pom.xml
+agent-example-spring/project-suppression.xml
+agent-example-spring/spotbugs_ignore.xml
+agent-example-spring/src
+
+agent-example-quarkus/.mvn
+agent-example-quarkus/Makefile
+agent-example-quarkus/README.md
+agent-example-quarkus/checkstyle.xml
+agent-example-quarkus/checkstyle-suppressions.xml
+agent-example-quarkus/mvnw
+agent-example-quarkus/mvnw.cmd
+agent-example-quarkus/pmd_ignore.properties
+agent-example-quarkus/pom.xml
+agent-example-quarkus/project-suppression.xml
+agent-example-quarkus/spotbugs_ignore.xml
+agent-example-quarkus/src
+
+agent-example-nodejs/.env.example
+agent-example-nodejs/.prettierrc
+agent-example-nodejs/.prettierignore
+agent-example-nodejs/Dockerfile
+agent-example-nodejs/Makefile
+agent-example-nodejs/README.md
+agent-example-nodejs/assets
+agent-example-nodejs/ci
+agent-example-nodejs/examples
+agent-example-nodejs/lib
+agent-example-nodejs/openapi-ts.config.ts
+agent-example-nodejs/package.json
+agent-example-nodejs/package-lock.json
+agent-example-nodejs/tsconfig.json
+agent-example-nodejs/vitest.config.ts

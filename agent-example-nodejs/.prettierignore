@@ -1,0 +1,4 @@
+# Prettier falls back to .gitignore, which the release artifact does not carry —
+# without this file `prettier --check .` lints generated output for customers.
+generated/
+openapi-agent.json

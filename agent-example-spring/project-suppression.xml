@@ -16,4 +16,16 @@
         <packageUrl regex="true">^pkg:maven/io\.prometheus/prometheus-metrics-.*@.*$</packageUrl>
         <cve>CVE-2026-42154</cve>
     </suppress>
+    <!--
+        CVE-2026-66299 (CVSS 7.5) flags tomcat-embed 11.0.24 — currently the latest release, so
+        there is no fixed version to bump to yet. 11.0.24 is itself an up-pin over Spring Boot
+        4.1.0's managed 11.0.22 (which is vulnerable to the older CVE-2026-59083/59084), so
+        dropping the pin would only trade one CVE for two. Temporary until a patched Tomcat > 11.0.24
+        ships; remove this suppression and bump the pin then. Example app; not the product.
+    -->
+    <suppress>
+        <notes><![CDATA[CVE-2026-66299: no fixed Tomcat released yet (11.0.24 is latest). Pinned up from Boot's 11.0.22 to clear CVE-2026-59083/59084. Revisit + bump when a patched 11.0.x ships.]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-.*@.*$</packageUrl>
+        <cve>CVE-2026-66299</cve>
+    </suppress>
 </suppressions>

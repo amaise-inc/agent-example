@@ -86,7 +86,24 @@ async function onLegalCaseReady(e: LegalCaseReadyEvent): Promise<void> {
         }
         break;
       }
+      case 'research': {
+        // Research answers add the external sources they were synthesized from. When grounded is
+        // false no source backed the answer.
+        console.log(`  A: ${baseAnswer.answer ?? '(no answer)'}`);
+        const research = baseAnswer as typeof baseAnswer & {
+          grounded?: boolean;
+          externalSources?: Array<{ url: string; title?: string; sourceName?: string }>;
+        };
+        if (research.grounded === false) {
+          console.log('  Not grounded in any source');
+        }
+        for (const source of research.externalSources ?? []) {
+          console.log(`    ${source.title ?? source.url} — ${source.url}`);
+        }
+        break;
+      }
       default: {
+        // An answer type this generated client does not know yet still carries its text.
         console.log(`  A: ${baseAnswer.answer ?? '(no answer)'}`);
         break;
       }

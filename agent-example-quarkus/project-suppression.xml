@@ -37,15 +37,17 @@
         <cpe>cpe:/a:opentelemetry:opentelemetry</cpe>
     </suppress>
     <!--
-        CVE-2026-42582 (CVSS 7.5) is an HTTP/3 QPACK decoder overflow in
-        io.netty:netty-codec-http3 — an artifact that only exists on the 4.2.x line and is
-        NOT on this classpath (Quarkus/Vert.x pull netty-transport/codec/handler at 4.1.x,
-        no HTTP/3). NVD encodes the fix as < 4.2.13.Final against the broad cpe:netty:netty,
-        so every 4.1.x netty module is over-matched. False positive for this build.
+        Both are HTTP/3 defects in io.netty:netty-codec-http3 — an artifact that only exists
+        on the 4.2.x line and is NOT on this classpath (Quarkus/Vert.x pull
+        netty-transport/codec/handler at 4.1.x, no HTTP/3): CVE-2026-42582 (CVSS 7.5) is a
+        QPACK decoder overflow, CVE-2026-56816 (CVSS 7.5) is unbounded buffering of reserved
+        frame types. NVD encodes both fixes against the broad cpe:netty:netty, so every 4.1.x
+        netty module is over-matched. False positives for this build.
     -->
     <suppress>
-        <notes><![CDATA[CVE-2026-42582 affects netty-codec-http3 only (not on this classpath); NVD CPE over-matches every 4.1.x netty module. False positive.]]></notes>
+        <notes><![CDATA[CVE-2026-42582 and CVE-2026-56816 affect netty-codec-http3 only (not on this classpath); NVD CPE over-matches every 4.1.x netty module. False positives.]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.netty/netty-.*@4\.1\.[0-9]+\.Final$</packageUrl>
         <cve>CVE-2026-42582</cve>
+        <cve>CVE-2026-56816</cve>
     </suppress>
 </suppressions>

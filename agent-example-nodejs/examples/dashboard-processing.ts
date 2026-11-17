@@ -48,9 +48,15 @@ async function onLegalCaseReady(e: LegalCaseReadyEvent): Promise<void> {
   });
 
   console.log('\n--- Dashboard Results ---');
-  // Answers are polymorphic: "answer" (text), "trafficLight" (text + color), or "list" (items).
+  // A new runId means newer answers; a correction or sign-off keeps the same runId.
+  console.log(
+    `Run: ${dashboard?.runId ?? '(none)'} completed at ${dashboard?.runCompletedAt ?? '-'}`,
+  );
+  // Answers are polymorphic: "answer", "trafficLight", "list", "json" or "research".
   for (const baseAnswer of dashboard?.answers ?? []) {
-    console.log(`Q: ${baseAnswer.title}`);
+    console.log(
+      `Q: ${baseAnswer.title} (corrected=${baseAnswer.corrected}, signedOffAt=${baseAnswer.signedOffAt ?? '-'})`,
+    );
     switch (baseAnswer.type) {
       case 'trafficLight': {
         console.log(`  A: ${baseAnswer.answer ?? '(no answer)'} [${baseAnswer.trafficLight}]`);
@@ -152,7 +158,8 @@ async function run(): Promise<void> {
 
   try {
     // Create LegalCase - container for all documents belonging to one claim.
-    // Idempotent: if a LegalCase with the same ID exists, it is reopened (HTTP 200).
+    // Idempotent: if a LegalCase with the same ID exists, its caseData and metadata are upserted
+    // and it is returned (HTTP 200); the status is never changed here — use unarchiveLegalCase().
     console.log(`🗂  Creating LegalCase ${legalCaseId}...`);
     await LegalCaseService.createLegalCase({
       body: {
@@ -183,10 +190,12 @@ async function run(): Promise<void> {
           'source.system.url': 'https://crm.example.com/cases/001',
         },
 
-        // -- owner / ownerEmail (at least one required) --------------------
-        // Assigns the case to a user. Use `owner` with a technical user ID
-        // (from SSO/IdP), or `ownerEmail` for email-based lookup.
-        // owner: 'auth0|user-id-from-sso',
+        // -- owner / ownerEmail (optional) ---------------------------------
+        // Assigns the case to a user. Send one: `owner` takes the amaise user
+        // ID (your IdP's identifier, no provider prefix), `ownerEmail` the email
+        // of a member of the workspace. `owner` wins if both are sent; never put
+        // an email in `owner`. https://docs.amaise.com/guide/agent.html#assigning-an-owner
+        // owner: 'user-id-from-sso',
         // ownerEmail: 'jane.handler@insurance.com',
 
         // -- accessGroup (optional) ----------------------------------------

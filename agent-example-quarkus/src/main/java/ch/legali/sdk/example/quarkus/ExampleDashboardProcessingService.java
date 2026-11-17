@@ -56,6 +56,9 @@ public class ExampleDashboardProcessingService {
 
     log.info("Dashboard has {} answers", dashboard.answers().size());
     log.info("Dashboard can be accessed at {}", dashboard.url());
+    // A new runId means newer answers; a correction or sign-off keeps the same runId.
+    log.info(
+        "Answers come from run {} completed at {}", dashboard.runId(), dashboard.runCompletedAt());
 
     // Print question-answer pairs — answers are polymorphic, check the type for richer data
     StringBuilder questionAnswerPairs = new StringBuilder();
@@ -63,7 +66,14 @@ public class ExampleDashboardProcessingService {
         .answers()
         .forEach(
             answer -> {
-              questionAnswerPairs.append(answer.title()).append(System.lineSeparator());
+              questionAnswerPairs
+                  .append(answer.title())
+                  .append(" (corrected=")
+                  .append(answer.corrected())
+                  .append(", signedOffAt=")
+                  .append(answer.signedOffAt())
+                  .append(")")
+                  .append(System.lineSeparator());
               if (answer instanceof AgentDashboardTrafficLightAnswerDTO trafficLight) {
                 questionAnswerPairs
                     .append(trafficLight.answer())

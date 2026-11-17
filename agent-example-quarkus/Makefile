@@ -20,12 +20,12 @@ clean:
 ## install: mvn install (pre-downloads dependencies for cache efficiency)
 install:
 	@${maven_cmd} -B dependency:resolve dependency:resolve-plugins
-	${maven_cmd} install -DskipTests
+	${maven_cmd} install -DskipTests -DskipITs
 
 ## build: build the agent
 build:
 	@${maven_cmd} -B dependency:resolve dependency:resolve-plugins
-	@${maven_cmd} package -DskipTests
+	@${maven_cmd} package -DskipTests -DskipITs
 
 ## format: run spotless google java formatter
 format:

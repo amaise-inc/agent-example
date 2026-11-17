@@ -134,9 +134,9 @@ public class ExampleThread implements Runnable {
                     Map.entry("PII_EMAIL", "john.doe@example.com"),
                     Map.entry("CUSTOM_1", "crm-ref-12345")))
             .reference("123-456-789")
-            // Pass the UserID from SSO
+            // The user's amaise user ID - the identity-provider identifier, no prefix
             .owner("DummyIamUser")
-            // or pass the user's e-mail
+            // or, instead of owner, the email of a member of the workspace
             // .ownerEmail("dummy@user.com")
             .accessGroup("group1")
             .putMetadata("meta.dummy", "dummy value")
@@ -146,11 +146,17 @@ public class ExampleThread implements Runnable {
     // update legal case
     log.info("🤓  Updating LegalCase");
     AgentLegalCaseDTO legalCaseResponse = this.legalCaseService.get(legalCase.legalCaseId());
+    // owner is the stored user id; ownerEmail is personal data, so log only whether it is known
+    boolean ownerEmailKnown =
+        legalCaseResponse.ownerEmail() != null && !legalCaseResponse.ownerEmail().isBlank();
+    log.info("👤  Owner {} (email known: {})", legalCaseResponse.owner(), ownerEmailKnown);
     AgentLegalCaseDTO nameChanged =
         AgentLegalCaseDTO.builder()
             .from(legalCaseResponse)
             .caseData(Map.of("PII_FIRSTNAME", "Jane"))
             .reference("John changed his name")
+            // Reassigns by email; the owner copied unchanged from the read does not override it
+            // .ownerEmail("jane.handler@insurance.com")
             .build();
     this.legalCaseService.update(nameChanged);
 
@@ -381,9 +387,9 @@ public class ExampleThread implements Runnable {
             .caseData(
                 Map.ofEntries(Map.entry("PII_FIRSTNAME", "John"), Map.entry("PII_LASTNAME", "Doe")))
             .reference("123-456-789")
-            // Pass the UserID from SSO
+            // The user's amaise user ID - the identity-provider identifier, no prefix
             .owner("DummyIamUser")
-            // or pass the user's e-mail
+            // or, instead of owner, the email of a member of the workspace
             // .ownerEmail("dummy@user.com")
             .accessGroup("group1")
             .putMetadata("meta.dummy", "dummy value")

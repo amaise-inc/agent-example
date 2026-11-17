@@ -86,12 +86,15 @@ All configuration is done via environment variables (see `.env.example`):
 
 Dashboard answers are polymorphic — each answer has a `type` discriminator:
 
-| Type           | Description                                 | Key Fields                        |
-| -------------- | ------------------------------------------- | --------------------------------- |
-| `answer`       | Plain text answer                           | `answer`                          |
-| `trafficLight` | Text with a traffic light color             | `answer`, `trafficLight` (enum)   |
-| `list`         | Structured list with field labels and items | `answer`, `headers`, `items`      |
-| `json`         | Structured data matching item schema        | `answer`, `data`, `schemaVersion` |
+| Type           | Description                                            | Key Fields                              |
+| -------------- | ------------------------------------------------------ | --------------------------------------- |
+| `answer`       | Plain text answer                                      | `answer`                                |
+| `trafficLight` | Text with a traffic light color                        | `answer`, `trafficLight` (enum)         |
+| `list`         | Structured list with field labels and items            | `answer`, `headers`, `items`            |
+| `json`         | Structured data matching item schema                   | `answer`, `data`, `schemaVersion`       |
+| `research`     | Text with the external sources it was synthesized from | `answer`, `grounded`, `externalSources` |
+
+Every answer also says how far a person has checked it: `corrected` is `true` when a person wrote or edited it, and `signedOffAt` is when a person signed it off. The dashboard names the run its answers come from with `runId` and `runCompletedAt`; a new `runId` means newer answers.
 
 ### List answers
 

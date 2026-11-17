@@ -55,6 +55,9 @@ Dashboard answers are polymorphic — each answer has a `type` discriminator:
 | `trafficLight` | `AgentDashboardTrafficLightAnswerDTO` | `answer()`, `trafficLight()`                      |
 | `list`         | `AgentDashboardListAnswerDTO`         | `answer()`, `headers()` (field labels), `items()` |
 | `json`         | `AgentDashboardJsonAnswerDTO`         | `answer()`, `data()`, `schemaVersion()`           |
+| `research`     | `AgentDashboardResearchAnswerDTO`     | `answer()`, `grounded()`, `externalSources()`     |
+
+Every answer also says how far a person has checked it: `corrected()` is `true` when a person wrote or edited it, and `signedOffAt()` is when a person signed it off. The dashboard names the run its answers come from with `runId()` and `runCompletedAt()`; a new `runId()` means newer answers.
 
 ### List answers
 

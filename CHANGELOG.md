@@ -7,6 +7,105 @@ Each entry says plainly whether it needs anything from you. **Action required**
 marks a change an unmodified integration will notice; everything else is safe to
 take by bumping the version.
 
+## Unreleased
+
+### Action required
+
+- **A client generated from the OpenAPI document renames `TicketClosedEvent` to
+  `TicketUpdatedEvent`.** The schema is now published under its own name. The event payload and
+  the `TICKET_UPDATED` type are unchanged, but code that refers to the generated
+  `TicketClosedEvent` class stops compiling once you regenerate. Rename it to
+  `TicketUpdatedEvent`.
+- **A dashboard `list` answer leaves out the rows a person excluded in amaise.** `items` and
+  `_meta.rowCount` in the answer text count only the remaining rows, and `_meta.excludedRowIndices`
+  is gone. This is behaviour of the API, already live for every SDK version. If you counted or
+  filtered excluded rows yourself, drop that step.
+
+### Deprecated
+
+- **Every collaboration request is now a chat, so `AgentTicketDTO.coordinator()` and the `REVIEWING`
+  status are deprecated.** Both keep working and nothing needs to change. `coordinator()` returns
+  the person who coordinated a request before it became a chat, and `null` for every other request,
+  which is every request created from now on; that person is also listed in `recipients()`, and on a
+  converted request that had no expert yet also in `recipient()`, which used to be `null` there.
+  `REVIEWING` is no longer set, and no `TicketUpdatedEvent` follows a review any more. `QUEUED`
+  keeps its meaning: nobody has taken the request on yet, for example at an external service
+  provider. See `BREAKING_CHANGES.md` for the field-by-field change.
+- **Behaviour change ahead: three months after the EU release of this change,
+  `AgentTicketDTO.coordinator()` returns `null` for every request.** amaise then stops recording who
+  coordinated a request before it became a chat. The field stays; that person stays listed in
+  `recipients()`. If you read `coordinator()`, read `recipients()` instead before then.
+
+### New
+
+- Every new collaboration request is a chat, so its question and answer text arrive in
+  `ticketEventHistory`. `AgentTicketDTO.question` and `TicketCreatedEvent.question` are empty for a
+  new request; its opening message is the first `MESSAGE` entry. When someone marks the chat as
+  answered, a `TicketUpdatedEvent` with `status` `ANSWERED` delivers the answer:
+  `AgentTicketDTO.answer` carries the chat marker `TICKET_TYPE:CHAT`, the answer text is a `MESSAGE`
+  entry before the `ANSWER` entry, and `attachments` lists the files exchanged. Later events for the
+  same request keep `status` `ANSWERED`, so import an answer once per `ANSWER` entry `id`. Requests
+  created earlier keep their question and answer text. This is behaviour of the API and reaches
+  every SDK version. No action is needed.
+- A collaboration request can name several recipients. `AgentTicketDTO.recipients()` lists
+  every recipient in the order they were named; `recipient()` is unchanged and equals the first
+  entry. The ticket event history gains `ADD_RECIPIENT` and `REMOVE_RECIPIENT` entries when a
+  recipient joins or leaves a request.
+- A dashboard read names the run its answers come from: `AgentDashboardDTO.runId()` and
+  `runCompletedAt()`. Each answer says whether a person corrected it (`corrected()`) and when a
+  person signed it off (`signedOffAt()`). The new fields are additive; `runId`,
+  `runCompletedAt` and `signedOffAt` are `null` when there is nothing to report.
+
+### Improved
+
+- Deleting a message or an attachment in a collaboration request withdraws its files: amaise
+  sends a `TicketUpdatedEvent` whose `attachments` and history leave them out, so you can drop
+  your copy, and their URIs answer `404`. Before, a deleted message's files stayed listed and
+  no event followed the delete. No action is needed.
+- Dependency updates: the SDK runtime moves to OpenFeign 13.17, Jackson 2.22.4,
+  Immutables 2.12.3 and swagger-annotations 2.2.55, all still on the Java 11 floor. The
+  examples move to Quarkus 3.40.1.1 and the Maven wrapper to Maven 3.10.0.
+- A notebook's `content` is now normalised HTML when it is saved. amaise also records who wrote
+  each passage as `data-*` attributes; those stay on the server and are stripped from every
+  notebook an agent reads. No action is needed.
+
+## 1.20.0
+
+### Action required
+
+Both changes below are behaviour of the API itself and have been live for every
+SDK version since they shipped; this release is the SDK documenting them.
+
+**Updating a case never changes its status.** `PATCH /agents/v1/cases/{legalCaseId}`
+(`LegalCaseService.update`, `updateLegalCase` in the Node example) used to persist
+the `status` on the request body, so an update on an archived case silently
+reopened it. The status now changes only through `archive` / `unarchive`. An
+update that sends a status still receives `200`, and the case keeps its stored
+status; the response reflects the persisted case rather than echoing the request.
+If your integration reopened cases by updating them, call `unarchive` first.
+
+**Source-file writes on an archived case answer `409`.** Deleting a file, moving a
+file out of an archived case, and updating the metadata of a file in an archived
+case are refused with `409` and raise `ArchivedLegalCaseException`. Workspaces
+exempt from archived-case immutability are unaffected. A file whose case has been
+deleted and not yet purged answers as before.
+
+### Improved
+
+- `SourceFileService.delete` is a soft delete — the file's documents go to the
+  trash and it can be restored by creating it again with the same id and an
+  identical binary — and it is idempotent on an already deleted file while the
+  case is open. It no longer declares `PreconditionFailedException`.
+- A PDF that is encrypted for editing but opens without a password (an owner
+  password with object streams) is now accepted on upload. A PDF that needs a
+  password to open is still rejected, and the error message says so.
+- The Node example runs on Node 24 (`.node-version`).
+
+### Fixed
+
+- The release build verifies the artifact on the toolchains the examples need
+  (JDK 25, Node 24), so a published release is one that built from a fresh unzip.
+
 ## 1.19.0
 
 ### Action required

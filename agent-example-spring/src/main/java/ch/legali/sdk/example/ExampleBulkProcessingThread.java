@@ -102,7 +102,7 @@ public class ExampleBulkProcessingThread implements Runnable {
             .legalCaseId(UUID.randomUUID())
             // Use the filename as reference
             .reference(filename)
-            // Pass the UserID from SSO
+            // The user's amaise user ID - the identity-provider identifier, no prefix
             .owner("DummyIamUser")
             .caseData(
                 Map.ofEntries(

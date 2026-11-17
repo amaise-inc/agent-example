@@ -86,9 +86,9 @@ public class ExampleAgentMetadataThread implements Runnable {
                     Map.entry("PII_FIRSTNAME", legalCaseFirstname),
                     Map.entry("PII_LASTNAME", legalCaseLastname)))
             .reference("123-456-789")
-            // Pass the UserID from SSO
+            // The user's amaise user ID - the identity-provider identifier, no prefix
             .owner("DummyIamUser")
-            // or pass the user's e-mail
+            // or, instead of owner, the email of a member of the workspace
             // .ownerEmail("dummy@user.com")
             .accessGroup("group1")
             .putMetadata("meta.dummy", "dummy value")

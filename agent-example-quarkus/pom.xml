@@ -8,7 +8,7 @@
 
     <groupId>ch.legali</groupId>
     <artifactId>agent-example-quarkus</artifactId>
-    <version>1.20.0</version>
+    <version>1.21.0</version>
     <name>Agent Example (Quarkus)</name>
     <description>amaise Agent Example (Quarkus)</description>
 
@@ -24,7 +24,7 @@
         <!-- Quarkus Platform -->
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-        <quarkus.platform.version>3.40.1.1</quarkus.platform.version>
+        <quarkus.platform.version>3.40.1.2</quarkus.platform.version>
 
         <!-- Maven Plugins Versions -->
         <surefire.plugin.version>3.6.1</surefire.plugin.version>
@@ -36,7 +36,7 @@
         <spotless.java.format.version>1.28.0</spotless.java.format.version>
         <checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
         <!-- Engine pin: the plugin's bundled default lags the Java release this module compiles at. -->
-        <checkstyle.version>14.3.0</checkstyle.version>
+        <checkstyle.version>14.4.0</checkstyle.version>
         <dependency-check.version>12.2.2</dependency-check.version>
         <!-- dependency-check NVD auto-download; set false to reuse a pre-populated cache -->
         <owasp.autoUpdate>true</owasp.autoUpdate>
@@ -61,7 +61,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>2.22.4</version>
+                <version>2.23.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

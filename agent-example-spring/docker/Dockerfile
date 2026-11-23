@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ### BUILD image
-FROM eclipse-temurin:25-jammy AS builder
+FROM eclipse-temurin:25.0.5.1_2-jdk-jammy AS builder
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ RUN ./mvnw package -DskipTests
 RUN java -Djarmode=tools -jar target/agent.jar extract --layers --launcher --destination extracted
 
 ### RUNTIME image
-FROM eclipse-temurin:25 AS runtime
+FROM eclipse-temurin:25.0.5.1_2-jdk AS runtime
 
 # add curl for healthcheck
 RUN apt-get update \

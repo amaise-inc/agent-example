@@ -9,7 +9,7 @@
 #
 # Then, build the image with:
 #
-# docker buildx build --load -f src/main/docker/Dockerfile.jvm -t quarkus/agent-example-quarkus-jvm .
+# docker buildx build --pull --load -f src/main/docker/Dockerfile.jvm -t quarkus/agent-example-quarkus-jvm .
 #
 # Then run the container using:
 #
@@ -81,7 +81,7 @@
 #
 ###
 
-FROM registry.access.redhat.com/ubi9/openjdk-25:1.24 AS builder
+FROM registry.access.redhat.com/ubi9/openjdk-25:1.24-5 AS builder
 
 USER root
 WORKDIR /app
@@ -93,7 +93,7 @@ RUN chmod +x ./mvnw
 RUN ./mvnw package -DskipTests
 
 
-FROM registry.access.redhat.com/ubi9/openjdk-25:1.24
+FROM registry.access.redhat.com/ubi9/openjdk-25:1.24-5
 ENV LANGUAGE='en_US:en'
 
 # We make four distinct layers so if there are application changes the library layers can be re-used

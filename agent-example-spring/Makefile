@@ -67,7 +67,7 @@ dep-check:
 
 ## dockerize: create agent docker image
 dockerize:
-	@docker buildx build --load -f docker/Dockerfile -t "$(DOCKER_TAG)" .
+	@docker buildx build --pull --load -f docker/Dockerfile -t "$(DOCKER_TAG)" .
 
 ## run: run docker image
 run: dockerize

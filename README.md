@@ -18,13 +18,13 @@
 **Steps:**
 
 1. Set up amaise cloud credentials in `quickstart/agent.env`
-2. In the `quickstart` directory, run `docker compose build`.
+2. In the `quickstart` directory, run `docker compose build --pull`.
 3. Run `docker compose up agent_spring` or `docker compose up agent_quarkus`
 4. The agent runs and starts exchanging data
 5. On the app, check the agent status in Workspace Settings / Integration.
 6. In case you need monitoring or proxy support, you can start the corresponding services:
    - Monitoring: `docker compose up prometheus grafana`
-     - Access Grafana at [http://localhost:3000/](http://localhost:3000/) (admin/adminex)
+     - Access Grafana at [http://localhost:3000/](http://localhost:3000/) (user `admin`, password `admin` unless `GRAFANA_ADMIN_PASSWORD` is set; the ports listen on localhost only)
      - Add Prometheus data source pointing to http://prometheus:9090/
    - HTTP Proxy: `docker compose up squid` and adapt `agent.env` to use the proxy
 

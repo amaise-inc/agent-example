@@ -7,10 +7,19 @@ Each entry says plainly whether it needs anything from you. **Action required**
 marks a change an unmodified integration will notice; everything else is safe to
 take by bumping the version.
 
-## Unreleased
+## 1.21.0
 
 ### Action required
 
+- **Update the JVM that runs your agent or the SDK if it is Java 17.0.6 or later on x86-64.**
+  CVE-2026-114938 lets a JVM on x86-64 corrupt memory while it decodes Base64 input. Update to
+  Java 17.0.21.1, 21.0.13.1, 25.0.5.1 or 27.0.1.1, or your JVM vendor's equivalent build. The
+  Spring and Quarkus example images now build on fixed versions
+  (`eclipse-temurin:25.0.5.1_2-jdk`, `ubi9/openjdk-25:1.24-5`). If you built an example image
+  before 2026-11-21, rebuild it with `docker compose build --pull` or `make dockerize`, which
+  now pulls, and recreate the containers. Until you can update, start the JVM with
+  `JAVA_TOOL_OPTIONS=-XX:-UseBASE64Intrinsics`. Not affected: Java 11, ARM64 (aarch64) hosts,
+  Quarkus native images, and integrations without a JVM such as the Node.js example.
 - **A client generated from the OpenAPI document renames `TicketClosedEvent` to
   `TicketUpdatedEvent`.** The schema is now published under its own name. The event payload and
   the `TICKET_UPDATED` type are unchanged, but code that refers to the generated
@@ -68,6 +77,10 @@ take by bumping the version.
 - A notebook's `content` is now normalised HTML when it is saved. amaise also records who wrote
   each passage as `data-*` attributes; those stay on the server and are stripped from every
   notebook an agent reads. No action is needed.
+- The examples' health and metrics port accepts less: the Spring example no longer parses
+  multipart requests (`spring.servlet.multipart.enabled=false`) and the Quarkus example no longer
+  offers HTTP/2 (`quarkus.http.http2=false`). Health checks and Prometheus scrapes are unchanged.
+  If you added your own endpoints to an example that need either, turn the setting back on.
 
 ## 1.20.0
 

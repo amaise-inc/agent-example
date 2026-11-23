@@ -8,7 +8,7 @@ services:
     env_file:
       - agent.env
     ports:
-      - "8085:8085"
+      - "127.0.0.1:8085:8085"
 
   agent_quarkus:
     container_name: "legal-i-agent-quarkus"
@@ -20,7 +20,7 @@ services:
 
   # monitoring    
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v3.16.0
     container_name: "prometheus"
     volumes:
       - ./dependencies/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -30,28 +30,28 @@ services:
       - "--web.console.libraries=/usr/share/prometheus/console_libraries"
       - "--web.console.templates=/usr/share/prometheus/consoles"
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.2.6
     container_name: "grafana"
     depends_on:
       - prometheus
     links:
       - prometheus:prometheus
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SERVER_DOMAIN=myrul.com
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
 
   # http proxy
   squid:
     image: sameersbn/squid:3.5.27-2
     container_name: "squid"
     ports:
-      - "3128:3128"
+      - "127.0.0.1:3128:3128"
     volumes:
       - ./dependencies/squid.conf:/etc/squid/squid.conf
       - ./dependencies/:/var/log/squid/

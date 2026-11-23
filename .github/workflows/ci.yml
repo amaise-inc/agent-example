@@ -20,6 +20,7 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
+          check-latest: true
           cache: maven
           cache-dependency-path: agent-example-spring/pom.xml
       - name: Build with Maven
@@ -38,6 +39,7 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
+          check-latest: true
           cache: maven
           cache-dependency-path: agent-example-quarkus/pom.xml
       - name: Build with Maven
